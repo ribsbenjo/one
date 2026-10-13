@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ribizsár Benjámin</title>
+  <meta name="description" content="Ribizsár Benjámin – Applied Economics student at Corvinus University of Budapest, Teaching Assistant in Mathematics, EVK member." />
 
   <!-- CSS -->
   <link rel="stylesheet" href="styles.css" />
@@ -14,11 +15,12 @@
   <!-- Navigation -->
   <header>
     <nav class="navbar">
-      <h1 class="logo">Ribizsar Benjamin</h1>
+      <a href="index.html" class="logo">Ribizsár Benjámin</a>
       <ul class="nav-links">
-        <li><a href="#about">About Me</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#education">Education</a></li>
         <li><a href="#projects">Projects</a></li>
-        <li><a href="#achievements">Achievements</a></li>
         <li><a href="#skills">Skills</a></li>
       </ul>
     </nav>
@@ -29,85 +31,205 @@
 
     <!-- Hero Section -->
     <section class="hero">
-      <h2>Hi, I’m Benjamin 👋</h2>
-      <p>I'm professional side quester and lifelong learner.</p>
+      <div class="hero-text">
+        <span class="eyebrow">Applied Economics · Corvinus University of Budapest</span>
+        <h2>Hi, I’m Benjámin 👋</h2>
+        <p>
+          Teaching Assistant in Mathematics, EVK member and consulting enthusiast.
+          Professional side quester and lifelong learner.
+        </p>
+        <div class="hero-actions">
+          <a href="#experience" class="btn">See my experience</a>
+          <a href="#projects" class="btn btn-outline">View projects</a>
+        </div>
+      </div>
+      <img class="hero-photo" src="pictures/profile.jpg" alt="Portrait of Ribizsár Benjámin" />
     </section>
 
     <!-- About Me -->
     <section id="about">
       <h2>About Me</h2>
       <p>
-        I'm Ribizsar Benjamin, I am currently a university sturdent passionate about web development 
-        and coding. I'm studying applied economics at Corvinus University of Budapest. I am also passionate 
-        about sports, I'm currently doing calisthenics and running. But I also did parachuting and some other crazy sports.
-        To prove my grit I ran 100 km in 4 days and in that time I managed to run a marathon without any prior training and help.
-        I also like going to the gym, my bench press max is 130 kg, and I can squat 160 kg and deadlift 200 kg.
+        I’m Ribizsár Benjámin, an Applied Economics student at Corvinus University of Budapest.
+        I love mathematics, data and building things with code, and I currently support the
+        Department of Mathematics as a Teaching Assistant. I’m a member of EVK College for Advanced
+        Studies, where I work in the IT Committee, and of the Consulting Club, where I sharpen my
+        structured problem-solving.
+      </p>
+      <p>
+        Outside of university I’m into sports: calisthenics, running, the gym and the occasional
+        crazy one like parachuting. To prove my grit, I ran 100 km in 4 days, including a marathon
+        without any prior training.
       </p>
       <a href="about.html" class="btn">More About Me</a>
     </section>
 
+    <!-- Experience -->
+    <section id="experience">
+      <h2>Experience</h2>
+      <ul class="timeline">
+        <li>
+          <h3>Teaching Assistant</h3>
+          <div class="org">Corvinus University of Budapest · Contract</div>
+          <div class="meta">Oct 2026 – Present · Budapest, Hungary</div>
+          <p>
+            Supporting the Department of Mathematics at Corvinus University of Budapest in
+            delivering undergraduate coursework.
+          </p>
+          <ul class="tag-row">
+            <li class="tag">University Teaching</li>
+            <li class="tag">Mathematics</li>
+          </ul>
+        </li>
+        <li>
+          <h3>Consulting Specialist</h3>
+          <div class="org">Consulting Club</div>
+          <div class="meta">Feb 2026 – Present · Budapest, Hungary</div>
+          <p>
+            Member of the Consulting Club, an international, English-speaking community. I sharpen
+            my structured problem-solving through regular case trainings and projects with partner
+            companies.
+          </p>
+          <ul class="tag-row">
+            <li class="tag">Case Solving</li>
+            <li class="tag">Structured Problem-Solving</li>
+          </ul>
+        </li>
+        <li>
+          <h3>Member</h3>
+          <div class="org">SPM – Speciális Pénzügyi-Matematikai Diákszervezet</div>
+          <div class="meta">Sep 2025 – Present · Budapest, Hungary</div>
+          <p>
+            Active member focused on deepening practical skills in mathematics and programming,
+            taking part in collaborative problem-solving sessions and technical discussions.
+          </p>
+          <ul class="tag-row">
+            <li class="tag">Mathematics</li>
+            <li class="tag">Python</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Education -->
+    <section id="education">
+      <h2>Education</h2>
+      <ul class="timeline">
+        <li>
+          <h3>EVK College for Advanced Studies</h3>
+          <div class="org">IT Committee member</div>
+          <div class="meta">Sep 2026 – 2030</div>
+          <p>
+            EVK is Corvinus University’s 35-year-old professional community. Organized like a
+            company, it gives members hands-on experience running real business operations.
+          </p>
+          <ul class="tag-row">
+            <li class="tag">Vibe Coding</li>
+            <li class="tag">Workflow Automation</li>
+          </ul>
+        </li>
+        <li>
+          <h3>Corvinus University of Budapest</h3>
+          <div class="org">Bachelor’s degree, Applied Economics</div>
+          <div class="meta">Sep 2025 – May 2028</div>
+          <ul class="tag-row">
+            <li class="tag">Statistical Data Analysis</li>
+            <li class="tag">Mathematics</li>
+          </ul>
+        </li>
+        <li>
+          <h3>SZTE Gyakorló Gimnázium</h3>
+          <div class="org">High school, Szeged</div>
+          <div class="meta">Graduated 2025</div>
+          <p>Advanced-level matura in mathematics, geography and English, with top grades in every subject.</p>
+        </li>
+      </ul>
+    </section>
+
     <!-- Projects -->
     <section id="projects">
-  <h2>Projects</h2>
+      <h2>Projects</h2>
+      <div class="project-grid">
 
-  <div class="project-card">
-    <h3>Portfolio Website</h3>
-    <p>A personal website built with HTML, CSS, and JavaScript.</p>
-  </div>
+        <div class="project-card">
+          <h3>Handwritten Digit Predictor</h3>
+          <p>A machine learning app that recognises digits you draw, running right in the browser with TensorFlow.js.</p>
+          <a href="handwritten.html" class="btn">Open App</a>
+        </div>
 
-  <div class="project-card large-card">
-    <h3>Handwritten Digit Predictor</h3>
-    <p>Click the button to open the AI digit prediction app!</p>
-    <a href="handwritten.html" class="btn">Open App</a>
-  </div>
+        <div class="project-card">
+          <h3>Sustainable Energy Research</h3>
+          <p>My research paper on sustainable energy management (in Hungarian).</p>
+          <a href="sustainable-energy-research.pdf" class="btn" target="_blank" rel="noopener">Open PDF</a>
+        </div>
 
-  <div class="project-card">
-    <h3>Research I did on Sustainable Energy Development</h3>
-    <p>Click the button to view or download my PDF.</p>
-    <a href="Fenntartható_energiagazdálkodás_Ribizsár_Benjámin.pdf" class="btn" target="_blank">Open PDF Page</a>
-  </div>
+        <div class="project-card">
+          <h3>Portfolio Website</h3>
+          <p>This site: a personal website built from scratch with HTML, CSS and JavaScript.</p>
+        </div>
 
-
-</section>
-
+      </div>
+    </section>
 
     <!-- Achievements -->
     <section id="achievements">
       <h2>Achievements</h2>
       <ul>
-        <li>Built my first website from scratch</li>
-        <li>I created an app that can predict handwritten digits using Machine Learning</li>
-        <li>Created multiple apps</li>
-        <li>I managed to finish 15th in the national geography competition (2025)</li>
-        <li>In my first semester I achieved a GPA of 5.0</li>
+        <li>Selected as a Teaching Assistant at the Department of Mathematics, Corvinus University (2026)</li>
+        <li>Admitted to EVK College for Advanced Studies (2026)</li>
+        <li>Achieved a GPA of 5.0 in my first university semester</li>
+        <li>Placed 15th in the national geography competition (OKTV, 2025)</li>
+        <li>Built a machine learning app that predicts handwritten digits</li>
+        <li>Built this website from scratch</li>
       </ul>
     </section>
-    
-  </section>  <!-- Skills -->
+
+    <!-- Skills -->
     <section id="skills">
       <h2>Skills</h2>
-      <ul class="skills-list">
-        <li>English C1</li>
-        <li>Hungarian Native</li>
-        <li>R</li>
-        <li>Python</li>
-        <li>HTML</li>
-        <li>JavaScript</li>
-        <li>Video Editing</li>
-      </ul>
+
+      <div class="skills-group">
+        <h3>Analytics &amp; Programming</h3>
+        <ul class="skills-list">
+          <li>Mathematics</li>
+          <li>Statistical Data Analysis</li>
+          <li>Python</li>
+          <li>R</li>
+          <li>HTML &amp; CSS</li>
+          <li>JavaScript</li>
+          <li>Workflow Automation</li>
+          <li>Vibe Coding</li>
+        </ul>
+      </div>
+
+      <div class="skills-group">
+        <h3>Business</h3>
+        <ul class="skills-list">
+          <li>Case Solving</li>
+          <li>Structured Problem-Solving</li>
+          <li>Teaching</li>
+          <li>Video Editing</li>
+        </ul>
+      </div>
+
+      <div class="skills-group">
+        <h3>Languages</h3>
+        <ul class="skills-list">
+          <li>Hungarian – Native</li>
+          <li>English – C1</li>
+        </ul>
+      </div>
     </section>
 
   </main>
 
   <!-- Footer -->
   <footer>
-    <p>© 2025 Ribizsár Benjámin. All rights reserved.</p>
+    <p>© <span id="year">2026</span> Ribizsár Benjámin. All rights reserved.</p>
   </footer>
 
-  <!-- Mouse Tracking Effect -->
-  <div id="line-container"></div>
-
-  <!-- JavaScript -->
-  <script src="script.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>

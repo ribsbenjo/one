@@ -11,10 +11,11 @@
   <!-- Navigation -->
   <header>
     <nav class="navbar">
-      <h1 class="logo">Ribizsár Benjámin</h1>
+      <a href="index.html" class="logo">Ribizsár Benjámin</a>
       <ul class="nav-links">
         <li><a href="index.html">Home</a></li>
-        <li><a href="#about">About Me</a></li>
+        <li><a href="index.html#experience">Experience</a></li>
+        <li><a href="index.html#projects">Projects</a></li>
       </ul>
     </nav>
   </header>
@@ -23,37 +24,61 @@
   <main>
 
     <!-- Hero Section -->
-    <section class="about-page hero">
+    <section class="hero-small">
       <h2>My Story</h2>
     </section>
 
-    <!-- About Me -->
-    <section id="about">
+    <section id="story">
 
       <h3>High School</h3>
       <p>
-        I was born in Szeged, Hungary on 2006.11.10. I went to SZTE Gyakorló Gimnázium. During high school, I developed a strong interest in Maths and Geography.
-        Graduating in 2025 with 5s in all subjects on the matura. I also did upper level in math, geography and english.
-        I competed in the <a href="https://www.oktatas.hu/pub_bin/dload/kozoktatas/tanulmanyi_versenyek/oktv/oktv2024_2025_helyezettek/foldrajz.pdf" target="_blank" rel="noopener noreferrer">
-        nationalgeography competition</a>, where I placed 15th.
+        I was born in Szeged, Hungary on 10 November 2006, and went to SZTE Gyakorló Gimnázium.
+        During high school I developed a strong interest in mathematics and geography. I graduated
+        in 2025 with top grades (5) in every matura subject, taking mathematics, geography and English
+        at advanced level. I also competed in the
+        <a href="https://www.oktatas.hu/pub_bin/dload/kozoktatas/tanulmanyi_versenyek/oktv/oktv2024_2025_helyezettek/foldrajz.pdf" target="_blank" rel="noopener noreferrer">national geography competition (OKTV)</a>,
+        where I placed 15th.
       </p>
-
 
       <h3>University</h3>
       <p>
-        I am currently studying Applied Economics at Corvinus University of Budapest. I am also passionate about web development and coding.
+        In 2025 I started studying Applied Economics at Corvinus University of Budapest, and finished
+        my first semester with a 5.0 GPA. I joined SPM, the special finance and mathematics student
+        organization, to deepen my mathematics and programming skills, and in 2026 the Consulting Club,
+        where I practise case solving and work on projects with partner companies.
+      </p>
+      <p>
+        In autumn 2026 I became a member of EVK College for Advanced Studies, where I work in the IT
+        Committee on workflow automation and building tools. Since October 2026 I have also been a
+        Teaching Assistant at the Department of Mathematics.
       </p>
 
       <h3>My Interests</h3>
       <p>
-        I enjoy sports: calisthenics, running, parachuting, and other adventurous activities. 
-        I ran 100 km in 4 days, completing a marathon without prior training. 
-        I also go to the gym: bench press max 130 kg, squat 160 kg, deadlift 200 kg.
+        I love sports: calisthenics, running, the gym, parachuting and other adventurous activities.
+        I ran 100 km in 4 days, completing a marathon without any prior training. In the gym my
+        best lifts are a 130 kg bench press, a 160 kg squat and a 200 kg deadlift. In winter you can
+        find me ice swimming.
       </p>
 
+      <div class="gallery">
+        <img src="pictures/ice1.jpg" alt="Ice swimming with friends in winter" loading="lazy" />
+        <img src="pictures/ice2.jpg" alt="Ice swimming in winter" loading="lazy" />
+        <img src="pictures/ice3.jpg" alt="Ice swimming in winter" loading="lazy" />
+        <img src="pictures/ice4.jpg" alt="Ice swimming in winter" loading="lazy" />
+      </div>
+
+      <a href="index.html" class="btn">Back to Home</a>
     </section>
 
   </main>
 
+  <footer>
+    <p>© <span id="year">2026</span> Ribizsár Benjámin. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
