@@ -1,223 +1,349 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ribizsár Benjámin</title>
   <meta name="description" content="Ribizsár Benjámin – Applied Economics student at Corvinus University of Budapest, Teaching Assistant in Mathematics, EVK member." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23151515'/><text x='50' y='68' font-size='52' font-family='monospace' font-weight='700' text-anchor='middle' fill='%23ff4d1a'>RB</text></svg>" />
 
-  <!-- CSS -->
+  <script>
+    (function () {
+      var t;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = t;
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
+  <div class="progress" aria-hidden="true"></div>
 
   <!-- Navigation -->
   <header>
     <nav class="navbar">
-      <a href="index.html" class="logo">Ribizsár Benjámin</a>
-      <ul class="nav-links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#experience">Experience</a></li>
-        <li><a href="#education">Education</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#skills">Skills</a></li>
-      </ul>
+      <a href="index.html" class="logo">ribizsar<span>.</span>b</a>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="#about">about</a></li>
+          <li><a href="#experience">experience</a></li>
+          <li><a href="#education">education</a></li>
+          <li><a href="#projects">projects</a></li>
+          <li><a href="#skills">skills</a></li>
+        </ul>
+        <button class="theme-toggle" type="button">◐ Chalkboard</button>
+      </div>
     </nav>
   </header>
 
-  <!-- Main Content -->
+  <!-- Banner -->
+  <section class="banner" aria-label="Introduction">
+    <canvas class="plot" aria-hidden="true"></canvas>
+    <div class="equation" aria-hidden="true">f(x) = sin(x + t)</div>
+    <div class="banner-inner">
+      <span class="kicker"><span class="dot-live"></span>Teaching Assistant · Corvinus Dept. of Mathematics</span>
+      <h1>
+        <span class="line">Ribizsár</span>
+        <span class="line"><span class="outline">Benjámin</span><span class="accent">.</span></span>
+      </h1>
+      <p class="lede">
+        <strong>Applied Economics</strong> student who likes numbers, code and hard things.
+        Professional side quester, lifelong learner.
+      </p>
+      <div class="banner-actions">
+        <a href="#experience" class="btn">See my work ↓</a>
+        <a href="handwritten.html" class="btn btn-outline">Try my AI app →</a>
+      </div>
+    </div>
+    <span class="hint">move your mouse to tune f(x) · click to change it</span>
+  </section>
+
+  <!-- Ticker -->
+  <div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker">
+    <div class="ticker-track">
+      <ul>
+        <li>Teaching Assistant @ Corvinus</li>
+        <li>EVK College for Advanced Studies</li>
+        <li>Consulting Club</li>
+        <li>SPM</li>
+        <li>100 km in 4 days</li>
+        <li>Ice swimmer</li>
+        <li>200 kg deadlift</li>
+        <li>Python · R · JavaScript</li>
+        <li>Parachuting</li>
+      </ul>
+      <ul>
+        <li>Teaching Assistant @ Corvinus</li>
+        <li>EVK College for Advanced Studies</li>
+        <li>Consulting Club</li>
+        <li>SPM</li>
+        <li>100 km in 4 days</li>
+        <li>Ice swimmer</li>
+        <li>200 kg deadlift</li>
+        <li>Python · R · JavaScript</li>
+        <li>Parachuting</li>
+      </ul>
+    </div>
+  </div>
+  </div>
+
   <main>
 
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-text">
-        <span class="eyebrow">Applied Economics · Corvinus University of Budapest</span>
-        <h2>Hi, I’m Benjámin 👋</h2>
-        <p>
-          Teaching Assistant in Mathematics, EVK member and consulting enthusiast.
-          Professional side quester and lifelong learner.
-        </p>
-        <div class="hero-actions">
-          <a href="#experience" class="btn">See my experience</a>
-          <a href="#projects" class="btn btn-outline">View projects</a>
-        </div>
+    <!-- Stats -->
+    <div class="stats reveal" role="list">
+      <div class="stat" role="listitem">
+        <div class="value"><span data-count="5.0" data-decimals="1">5.0</span></div>
+        <div class="label">GPA in my first semester at Corvinus</div>
       </div>
-      <img class="hero-photo" src="pictures/profile.jpg" alt="Portrait of Ribizsár Benjámin" />
-    </section>
+      <div class="stat" role="listitem">
+        <div class="value"><span data-count="100">100</span><small>km</small></div>
+        <div class="label">run in 4 days, incl. an untrained marathon</div>
+      </div>
+      <div class="stat" role="listitem">
+        <div class="value"><span data-count="99.4" data-decimals="1">99.4</span><small>%</small></div>
+        <div class="label">test accuracy of my digit-recognition model</div>
+      </div>
+      <div class="stat" role="listitem">
+        <div class="value"><span data-count="15">15</span><small>th</small></div>
+        <div class="label">in the national geography competition (OKTV)</div>
+      </div>
+    </div>
 
-    <!-- About Me -->
-    <section id="about">
-      <h2>About Me</h2>
-      <p>
-        I’m Ribizsár Benjámin, an Applied Economics student at Corvinus University of Budapest.
-        I love mathematics, data and building things with code, and I currently support the
-        Department of Mathematics as a Teaching Assistant. I’m a member of EVK College for Advanced
-        Studies, where I work in the IT Committee, and of the Consulting Club, where I sharpen my
-        structured problem-solving.
-      </p>
-      <p>
-        Outside of university I’m into sports: calisthenics, running, the gym and the occasional
-        crazy one like parachuting. To prove my grit, I ran 100 km in 4 days, including a marathon
-        without any prior training.
-      </p>
-      <a href="about.html" class="btn">More About Me</a>
+    <!-- About -->
+    <section id="about" class="reveal">
+      <div class="section-head">
+        <span class="num">§01</span>
+        <h2>About me</h2>
+        <span class="aside">Budapest, HU</span>
+      </div>
+      <div class="about-grid">
+        <div>
+          <p class="big">
+            I’m an Applied Economics student at Corvinus University of Budapest who loves
+            <span class="highlight">mathematics, data and building things with code</span>.
+          </p>
+          <p style="margin-top:1.4rem">
+            I support the Department of Mathematics as a Teaching Assistant, work in the IT Committee
+            of EVK College for Advanced Studies, and sharpen my structured problem-solving at the
+            Consulting Club.
+          </p>
+          <p>
+            Outside university I’m into calisthenics, running, the gym, ice swimming and the
+            occasional crazy one like parachuting. To prove my grit, I ran 100 km in 4 days,
+            including a marathon without any prior training.
+          </p>
+        </div>
+        <aside class="note-card">
+          <h3>// quick facts</h3>
+          <ul>
+            <li><span>Based in</span><span>Budapest</span></li>
+            <li><span>From</span><span>Szeged</span></li>
+            <li><span>Studying</span><span>Applied Econ</span></li>
+            <li><span>Languages</span><span>HU · EN C1</span></li>
+            <li><span>Deadlift</span><span>200 kg</span></li>
+          </ul>
+          <a href="about.html" class="btn">Read my story →</a>
+        </aside>
+      </div>
     </section>
 
     <!-- Experience -->
     <section id="experience">
-      <h2>Experience</h2>
+      <div class="section-head reveal">
+        <span class="num">§02</span>
+        <h2>Experience</h2>
+        <span class="aside">3 roles · all current</span>
+      </div>
       <ul class="timeline">
-        <li>
-          <h3>Teaching Assistant</h3>
-          <div class="org">Corvinus University of Budapest · Contract</div>
-          <div class="meta">Oct 2026 – Present · Budapest, Hungary</div>
-          <p>
-            Supporting the Department of Mathematics at Corvinus University of Budapest in
-            delivering undergraduate coursework.
-          </p>
-          <ul class="tag-row">
-            <li class="tag">University Teaching</li>
-            <li class="tag">Mathematics</li>
-          </ul>
+        <li class="reveal">
+          <div class="when">Oct 2026 – Present<br />Budapest<br /><span class="now">Now</span></div>
+          <div>
+            <h3>Teaching Assistant</h3>
+            <div class="org">Corvinus University of Budapest <span class="sep">/</span> Contract</div>
+            <p>
+              Supporting the Department of Mathematics at Corvinus University of Budapest in
+              delivering undergraduate coursework.
+            </p>
+            <ul class="tag-row">
+              <li class="tag">University Teaching</li>
+              <li class="tag">Mathematics</li>
+            </ul>
+          </div>
         </li>
-        <li>
-          <h3>Consulting Specialist</h3>
-          <div class="org">Consulting Club</div>
-          <div class="meta">Feb 2026 – Present · Budapest, Hungary</div>
-          <p>
-            Member of the Consulting Club, an international, English-speaking community. I sharpen
-            my structured problem-solving through regular case trainings and projects with partner
-            companies.
-          </p>
-          <ul class="tag-row">
-            <li class="tag">Case Solving</li>
-            <li class="tag">Structured Problem-Solving</li>
-          </ul>
+        <li class="reveal">
+          <div class="when">Feb 2026 – Present<br />Budapest<br /><span class="now">Now</span></div>
+          <div>
+            <h3>Consulting Specialist</h3>
+            <div class="org">Consulting Club</div>
+            <p>
+              Member of the Consulting Club, an international, English-speaking community. I sharpen
+              my structured problem-solving through regular case trainings and projects with partner
+              companies.
+            </p>
+            <ul class="tag-row">
+              <li class="tag">Case Solving</li>
+              <li class="tag">Structured Problem-Solving</li>
+            </ul>
+          </div>
         </li>
-        <li>
-          <h3>Member</h3>
-          <div class="org">SPM – Speciális Pénzügyi-Matematikai Diákszervezet</div>
-          <div class="meta">Sep 2025 – Present · Budapest, Hungary</div>
-          <p>
-            Active member focused on deepening practical skills in mathematics and programming,
-            taking part in collaborative problem-solving sessions and technical discussions.
-          </p>
-          <ul class="tag-row">
-            <li class="tag">Mathematics</li>
-            <li class="tag">Python</li>
-          </ul>
+        <li class="reveal">
+          <div class="when">Sep 2025 – Present<br />Budapest<br /><span class="now">Now</span></div>
+          <div>
+            <h3>Member</h3>
+            <div class="org">SPM <span class="sep">/</span> Speciális Pénzügyi-Matematikai Diákszervezet</div>
+            <p>
+              Active member focused on deepening practical skills in mathematics and programming,
+              taking part in collaborative problem-solving sessions and technical discussions.
+            </p>
+            <ul class="tag-row">
+              <li class="tag">Mathematics</li>
+              <li class="tag">Python</li>
+            </ul>
+          </div>
         </li>
       </ul>
     </section>
 
     <!-- Education -->
     <section id="education">
-      <h2>Education</h2>
+      <div class="section-head reveal">
+        <span class="num">§03</span>
+        <h2>Education</h2>
+      </div>
       <ul class="timeline">
-        <li>
-          <h3>EVK College for Advanced Studies</h3>
-          <div class="org">IT Committee member</div>
-          <div class="meta">Sep 2026 – 2030</div>
-          <p>
-            EVK is Corvinus University’s 35-year-old professional community. Organized like a
-            company, it gives members hands-on experience running real business operations.
-          </p>
-          <ul class="tag-row">
-            <li class="tag">Vibe Coding</li>
-            <li class="tag">Workflow Automation</li>
-          </ul>
+        <li class="reveal">
+          <div class="when">Sep 2026 – 2030</div>
+          <div>
+            <h3>EVK College for Advanced Studies</h3>
+            <div class="org">IT Committee member</div>
+            <p>
+              EVK is Corvinus University’s 35-year-old professional community. Organized like a
+              company, it gives members hands-on experience running real business operations.
+            </p>
+            <ul class="tag-row">
+              <li class="tag">Vibe Coding</li>
+              <li class="tag">Workflow Automation</li>
+            </ul>
+          </div>
         </li>
-        <li>
-          <h3>Corvinus University of Budapest</h3>
-          <div class="org">Bachelor’s degree, Applied Economics</div>
-          <div class="meta">Sep 2025 – May 2028</div>
-          <ul class="tag-row">
-            <li class="tag">Statistical Data Analysis</li>
-            <li class="tag">Mathematics</li>
-          </ul>
+        <li class="reveal">
+          <div class="when">Sep 2025 – May 2028</div>
+          <div>
+            <h3>Corvinus University of Budapest</h3>
+            <div class="org">Bachelor’s degree <span class="sep">/</span> Applied Economics</div>
+            <ul class="tag-row">
+              <li class="tag">Statistical Data Analysis</li>
+              <li class="tag">Mathematics</li>
+            </ul>
+          </div>
         </li>
-        <li>
-          <h3>SZTE Gyakorló Gimnázium</h3>
-          <div class="org">High school, Szeged</div>
-          <div class="meta">Graduated 2025</div>
-          <p>Advanced-level matura in mathematics, geography and English, with top grades in every subject.</p>
+        <li class="reveal">
+          <div class="when">Graduated 2025</div>
+          <div>
+            <h3>SZTE Gyakorló Gimnázium</h3>
+            <div class="org">High school <span class="sep">/</span> Szeged</div>
+            <p>Advanced-level matura in mathematics, geography and English, with top grades in every subject.</p>
+          </div>
         </li>
       </ul>
     </section>
 
     <!-- Projects -->
     <section id="projects">
-      <h2>Projects</h2>
+      <div class="section-head reveal">
+        <span class="num">§04</span>
+        <h2>Projects</h2>
+        <span class="aside">built from scratch</span>
+      </div>
       <div class="project-grid">
 
-        <div class="project-card">
+        <div class="project-card featured reveal">
+          <span class="badge">99.4% acc.</span>
+          <div class="index">01</div>
           <h3>Handwritten Digit Predictor</h3>
-          <p>A machine learning app that recognises digits you draw, running right in the browser with TensorFlow.js.</p>
-          <a href="handwritten.html" class="btn">Open App</a>
+          <p>Draw a digit and a neural network I trained guesses it, live in your browser.</p>
+          <a href="handwritten.html" class="btn">Open app →</a>
         </div>
 
-        <div class="project-card">
+        <div class="project-card reveal">
+          <span class="badge">PDF · HU</span>
+          <div class="index">02</div>
           <h3>Sustainable Energy Research</h3>
-          <p>My research paper on sustainable energy management (in Hungarian).</p>
-          <a href="sustainable-energy-research.pdf" class="btn" target="_blank" rel="noopener">Open PDF</a>
+          <p>My research paper on sustainable energy management.</p>
+          <a href="sustainable-energy-research.pdf" class="btn btn-outline" target="_blank" rel="noopener">Read paper ↗</a>
         </div>
 
-        <div class="project-card">
-          <h3>Portfolio Website</h3>
-          <p>This site: a personal website built from scratch with HTML, CSS and JavaScript.</p>
+        <div class="project-card reveal">
+          <span class="badge">HTML · CSS · JS</span>
+          <div class="index">03</div>
+          <h3>This Website</h3>
+          <p>Hand-coded, no frameworks. The banner plot, its derivative and the tangent line are drawn live on a canvas.</p>
+          <a href="#" class="btn btn-outline" onclick="window.scrollTo({top:0});return false;">Back to the plot ↑</a>
         </div>
 
       </div>
     </section>
 
     <!-- Achievements -->
-    <section id="achievements">
-      <h2>Achievements</h2>
-      <ul>
-        <li>Selected as a Teaching Assistant at the Department of Mathematics, Corvinus University (2026)</li>
+    <section id="achievements" class="reveal">
+      <div class="section-head">
+        <span class="num">§05</span>
+        <h2>Achievements</h2>
+      </div>
+      <ul class="checklist">
+        <li>Selected as a Teaching Assistant at the Department of Mathematics, Corvinus (2026)</li>
         <li>Admitted to EVK College for Advanced Studies (2026)</li>
-        <li>Achieved a GPA of 5.0 in my first university semester</li>
-        <li>Placed 15th in the national geography competition (OKTV, 2025)</li>
-        <li>Built a machine learning app that predicts handwritten digits</li>
-        <li>Built this website from scratch</li>
+        <li>5.0 GPA in my first university semester</li>
+        <li>15th place in the national geography competition (OKTV, 2025)</li>
+        <li>Trained a neural network that reads handwritten digits</li>
+        <li>Ran 100 km in 4 days, including a marathon without training</li>
       </ul>
     </section>
 
     <!-- Skills -->
-    <section id="skills">
-      <h2>Skills</h2>
-
-      <div class="skills-group">
-        <h3>Analytics &amp; Programming</h3>
-        <ul class="skills-list">
-          <li>Mathematics</li>
-          <li>Statistical Data Analysis</li>
-          <li>Python</li>
-          <li>R</li>
-          <li>HTML &amp; CSS</li>
-          <li>JavaScript</li>
-          <li>Workflow Automation</li>
-          <li>Vibe Coding</li>
-        </ul>
+    <section id="skills" class="reveal">
+      <div class="section-head">
+        <span class="num">§06</span>
+        <h2>Skills</h2>
       </div>
-
-      <div class="skills-group">
-        <h3>Business</h3>
-        <ul class="skills-list">
-          <li>Case Solving</li>
-          <li>Structured Problem-Solving</li>
-          <li>Teaching</li>
-          <li>Video Editing</li>
-        </ul>
-      </div>
-
-      <div class="skills-group">
-        <h3>Languages</h3>
-        <ul class="skills-list">
-          <li>Hungarian – Native</li>
-          <li>English – C1</li>
-        </ul>
+      <div class="skills-wrap">
+        <div class="skills-group">
+          <h3>// analytics &amp; code</h3>
+          <ul class="skills-list">
+            <li>Mathematics</li>
+            <li>Statistical Data Analysis</li>
+            <li>Python</li>
+            <li>R</li>
+            <li>HTML &amp; CSS</li>
+            <li>JavaScript</li>
+            <li>Machine Learning</li>
+          </ul>
+        </div>
+        <div class="skills-group">
+          <h3>// business &amp; tools</h3>
+          <ul class="skills-list">
+            <li>Case Solving</li>
+            <li>Structured Problem-Solving</li>
+            <li>Workflow Automation</li>
+            <li>Vibe Coding</li>
+            <li>Teaching</li>
+            <li>Video Editing</li>
+          </ul>
+        </div>
+        <div class="skills-group">
+          <h3>// languages</h3>
+          <ul class="skills-list">
+            <li>Hungarian · Native</li>
+            <li>English · C1</li>
+          </ul>
+        </div>
       </div>
     </section>
 
@@ -225,11 +351,16 @@
 
   <!-- Footer -->
   <footer>
-    <p>© <span id="year">2026</span> Ribizsár Benjámin. All rights reserved.</p>
+    <div class="footer-inner">
+      <div class="footer-big">Always on the next<br />side quest<span>.</span></div>
+      <div class="footer-meta">
+        <span>© <span data-year>2026</span> Ribizsár Benjámin</span>
+        <span>psst: type “ice” anywhere</span>
+        <a href="#" onclick="window.scrollTo({top:0});return false;">back to top ↑</a>
+      </div>
+    </div>
   </footer>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>

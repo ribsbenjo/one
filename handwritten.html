@@ -1,46 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Handwritten Digit Predictor</title>
+  <title>Digit Predictor · Ribizsár Benjámin</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23151515'/><text x='50' y='68' font-size='52' font-family='monospace' font-weight='700' text-anchor='middle' fill='%23ff4d1a'>RB</text></svg>" />
+
+  <script>
+    (function () {
+      var t;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = t;
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
 </head>
 <body>
+  <div class="progress" aria-hidden="true"></div>
 
-<header>
-  <nav class="navbar">
-    <a href="index.html" class="logo">Ribizsár Benjámin</a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="index.html#projects">Projects</a></li>
-    </ul>
-  </nav>
-</header>
+  <header>
+    <nav class="navbar">
+      <a href="index.html" class="logo">ribizsar<span>.</span>b</a>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="index.html">home</a></li>
+          <li><a href="index.html#projects">projects</a></li>
+        </ul>
+        <button class="theme-toggle" type="button">◐ Chalkboard</button>
+      </div>
+    </nav>
+  </header>
 
-<main class="predictor">
-  <h2>Handwritten Digit Predictor</h2>
-  <p>Draw a digit (0–9) in the box and see what the AI predicts!</p>
+  <section class="banner banner-small" aria-label="Page title">
+    <canvas class="plot" aria-hidden="true"></canvas>
+    <div class="equation" aria-hidden="true">f(x) = sin(x + t)</div>
+    <div class="banner-inner">
+      <span class="kicker"><span class="dot-live"></span>Project 01 · CNN · 99.4% test accuracy</span>
+      <h1><span class="outline">Digit</span> predictor<span class="accent">.</span></h1>
+    </div>
+  </section>
 
-  <canvas id="canvas" width="280" height="280"></canvas>
+  <main>
+    <div class="predictor-layout">
+      <canvas id="canvas" width="280" height="280" aria-label="Drawing area: draw a digit with your mouse or finger"></canvas>
 
-  <div class="predictor-controls">
-    <button id="clearBtn" class="btn" type="button">Clear</button>
-    <span id="prediction">Prediction: ?</span>
-  </div>
+      <div class="predictor-panel">
+        <p>Draw a digit (0–9) in the black box. A convolutional neural network I trained on 60,000 handwritten digits guesses it, right here in your browser.</p>
 
-  <p style="margin-top:1.5rem;">28×28 pixel input the model sees:</p>
-  <canvas id="preview" width="28" height="28"></canvas>
-  <p id="status" style="margin-top:1rem; color:#94a3b8;">Loading model…</p>
-</main>
+        <div class="result">
+          <div class="label">prediction</div>
+          <div id="prediction" aria-live="polite">Prediction: ?</div>
+          <div class="bars" id="bars" aria-hidden="true"></div>
+        </div>
 
-<footer>
-  <p>© <span id="year">2026</span> Ribizsár Benjámin. All rights reserved.</p>
-</footer>
+        <div class="result">
+          <div class="label">what the model sees · 28×28 px</div>
+          <canvas id="preview" width="28" height="28"></canvas>
+        </div>
 
+        <div class="predictor-controls">
+          <button id="clearBtn" class="btn" type="button">Clear ⌫</button>
+        </div>
+        <p id="status">Loading model…</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-big">Always on the next<br />side quest<span>.</span></div>
+      <div class="footer-meta">
+        <span>© <span data-year>2026</span> Ribizsár Benjámin</span>
+        <span>psst: type “ice” anywhere</span>
+        <a href="index.html">home ↑</a>
+      </div>
+    </div>
+  </footer>
+
+<script src="script.js"></script>
 <script>
-  document.getElementById('year').textContent = new Date().getFullYear();
 
   let model;
   const canvas = document.getElementById('canvas');
@@ -58,6 +102,20 @@
     pctx.fillStyle = 'black';
     pctx.fillRect(0, 0, preview.width, preview.height);
     predictionEl.textContent = 'Prediction: ?';
+    renderBars(null);
+  }
+
+  // Probability bar for every digit
+  const barsEl = document.getElementById('bars');
+  barsEl.innerHTML = Array.from({ length: 10 }, (_, d) =>
+    `<div class="bar"><span class="fill"></span><span class="digit">${d}</span></div>`).join('');
+  function renderBars(probs) {
+    const max = probs ? Math.max(...probs) : -1;
+    [...barsEl.children].forEach((b, d) => {
+      const p = probs ? probs[d] : 0;
+      b.querySelector('.fill').style.height = `${Math.max(p * 100, 3)}%`;
+      b.classList.toggle('top', p === max);
+    });
   }
   resetCanvas();
 
@@ -166,6 +224,7 @@
     });
     const pIndex = probs.indexOf(Math.max(...probs));
     predictionEl.textContent = `Prediction: ${pIndex} (${Math.round(probs[pIndex] * 100)}% sure)`;
+    renderBars(probs);
   }
 </script>
 
