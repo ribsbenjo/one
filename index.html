@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ribizsár Benjámin</title>
   <meta name="description" content="Ribizsár Benjámin – Applied Economics student at Corvinus University of Budapest, Teaching Assistant in Mathematics, EVK member." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23151515'/><text x='50' y='68' font-size='52' font-family='monospace' font-weight='700' text-anchor='middle' fill='%23ff4d1a'>RB</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23f4f0e6'/><text x='50' y='72' font-size='68' font-family='Georgia,serif' font-style='italic' text-anchor='middle' fill='%23b5522b'>θ</text></svg>" />
 
   <script>
     (function () {
@@ -18,12 +18,15 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <div class="progress" aria-hidden="true"></div>
+    <div class="trainer" aria-hidden="true">
+    epoch <b data-epoch>000</b>/100 · loss <b data-train-loss>2.300</b> <span class="ok">✓ converged</span>
+    <div class="trainer-bar"><div class="trainer-fill"></div></div>
+  </div>
 
   <!-- Navigation -->
   <header>
@@ -37,62 +40,34 @@
           <li><a href="#projects">projects</a></li>
           <li><a href="#skills">skills</a></li>
         </ul>
-        <button class="theme-toggle" type="button">◐ Chalkboard</button>
+        <button class="theme-toggle" type="button">☾ Night</button>
       </div>
     </nav>
   </header>
 
-  <!-- Banner -->
-  <section class="banner" aria-label="Introduction">
-    <canvas class="plot" aria-hidden="true"></canvas>
-    <div class="equation" aria-hidden="true">f(x) = sin(x + t)</div>
-    <div class="banner-inner">
-      <span class="kicker"><span class="dot-live"></span>Teaching Assistant · Corvinus Dept. of Mathematics</span>
-      <h1>
-        <span class="line">Ribizsár</span>
-        <span class="line"><span class="outline">Benjámin</span><span class="accent">.</span></span>
-      </h1>
+  <!-- Hero: a loss landscape with live gradient descent -->
+  <section class="hero" aria-label="Introduction">
+    <div class="landscape" data-seed="7" data-min="0.7,0.5" data-zone="0.5" data-levels="40" data-min-mobile="0.68,0.82" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <p class="kicker">Teaching Assistant · Corvinus Dept. of Mathematics</p>
+      <h1>Ribizsár<br /><em>Benjámin</em></h1>
       <p class="lede">
         <strong>Applied Economics</strong> student who likes numbers, code and hard things.
-        Professional side quester, lifelong learner.
+        Professional side quester, always descending towards the next minimum.
       </p>
-      <div class="banner-actions">
+      <div class="actions">
         <a href="#experience" class="btn">See my work ↓</a>
         <a href="handwritten.html" class="btn btn-outline">Try my AI app →</a>
       </div>
     </div>
-    <span class="hint">move your mouse to tune f(x) · click to change it</span>
-  </section>
-
-  <!-- Ticker -->
-  <div class="ticker-wrap" aria-hidden="true">
-  <div class="ticker">
-    <div class="ticker-track">
-      <ul>
-        <li>Teaching Assistant @ Corvinus</li>
-        <li>EVK College for Advanced Studies</li>
-        <li>Consulting Club</li>
-        <li>SPM</li>
-        <li>100 km in 4 days</li>
-        <li>Ice swimmer</li>
-        <li>200 kg deadlift</li>
-        <li>Python · R · JavaScript</li>
-        <li>Parachuting</li>
-      </ul>
-      <ul>
-        <li>Teaching Assistant @ Corvinus</li>
-        <li>EVK College for Advanced Studies</li>
-        <li>Consulting Club</li>
-        <li>SPM</li>
-        <li>100 km in 4 days</li>
-        <li>Ice swimmer</li>
-        <li>200 kg deadlift</li>
-        <li>Python · R · JavaScript</li>
-        <li>Parachuting</li>
-      </ul>
+    <div class="readout" aria-hidden="true">
+      <span>step <b data-step>000</b></span>
+      <span>L(θ) = <b data-loss>—</b></span>
+      <span class="status"></span>
     </div>
-  </div>
-  </div>
+    <div class="formula" aria-hidden="true">θ ← θ − η∇L(θ)</div>
+    <p class="hint">hover for −∇L · click the map to drop a new θ₀</p>
+  </section>
 
   <main>
 
@@ -119,7 +94,7 @@
     <!-- About -->
     <section id="about" class="reveal">
       <div class="section-head">
-        <span class="num">§01</span>
+        <span class="num">§ 01</span>
         <h2>About me</h2>
         <span class="aside">Budapest, HU</span>
       </div>
@@ -157,7 +132,7 @@
     <!-- Experience -->
     <section id="experience">
       <div class="section-head reveal">
-        <span class="num">§02</span>
+        <span class="num">§ 02</span>
         <h2>Experience</h2>
         <span class="aside">3 roles · all current</span>
       </div>
@@ -214,7 +189,7 @@
     <!-- Education -->
     <section id="education">
       <div class="section-head reveal">
-        <span class="num">§03</span>
+        <span class="num">§ 03</span>
         <h2>Education</h2>
       </div>
       <ul class="timeline">
@@ -258,34 +233,43 @@
     <!-- Projects -->
     <section id="projects">
       <div class="section-head reveal">
-        <span class="num">§04</span>
+        <span class="num">§ 04</span>
         <h2>Projects</h2>
         <span class="aside">built from scratch</span>
       </div>
       <div class="project-grid">
 
-        <div class="project-card featured reveal">
+        <div class="project-card reveal">
           <span class="badge">99.4% acc.</span>
-          <div class="index">01</div>
-          <h3>Handwritten Digit Predictor</h3>
-          <p>Draw a digit and a neural network I trained guesses it, live in your browser.</p>
-          <a href="handwritten.html" class="btn">Open app →</a>
+          <div class="landscape" data-mode="static" data-seed="3" data-min="0.6,0.55" data-levels="18" aria-hidden="true"></div>
+          <div class="card-body">
+            <div class="index">01</div>
+            <h3>Handwritten Digit Predictor</h3>
+            <p>Draw a digit and a neural network I trained guesses it, live in your browser.</p>
+            <a href="handwritten.html" class="btn">Open app →</a>
+          </div>
         </div>
 
         <div class="project-card reveal">
           <span class="badge">PDF · HU</span>
-          <div class="index">02</div>
-          <h3>Sustainable Energy Research</h3>
-          <p>My research paper on sustainable energy management.</p>
-          <a href="sustainable-energy-research.pdf" class="btn btn-outline" target="_blank" rel="noopener">Read paper ↗</a>
+          <div class="landscape" data-mode="static" data-seed="14" data-min="0.35,0.45" data-levels="18" aria-hidden="true"></div>
+          <div class="card-body">
+            <div class="index">02</div>
+            <h3>Sustainable Energy Research</h3>
+            <p>My research paper on sustainable energy management.</p>
+            <a href="sustainable-energy-research.pdf" class="btn btn-outline" target="_blank" rel="noopener">Read paper ↗</a>
+          </div>
         </div>
 
         <div class="project-card reveal">
           <span class="badge">HTML · CSS · JS</span>
-          <div class="index">03</div>
-          <h3>This Website</h3>
-          <p>Hand-coded, no frameworks. The banner plot, its derivative and the tangent line are drawn live on a canvas.</p>
-          <a href="#" class="btn btn-outline" onclick="window.scrollTo({top:0});return false;">Back to the plot ↑</a>
+          <div class="landscape" data-mode="static" data-seed="29" data-min="0.55,0.6" data-levels="18" aria-hidden="true"></div>
+          <div class="card-body">
+            <div class="index">03</div>
+            <h3>This Website</h3>
+            <p>Hand-coded, no frameworks. The contour maps are drawn with marching squares and the paths are real gradient descent with momentum.</p>
+            <a href="#" class="btn btn-outline" onclick="window.scrollTo({top:0});return false;">Back to the map ↑</a>
+          </div>
         </div>
 
       </div>
@@ -294,7 +278,7 @@
     <!-- Achievements -->
     <section id="achievements" class="reveal">
       <div class="section-head">
-        <span class="num">§05</span>
+        <span class="num">§ 05</span>
         <h2>Achievements</h2>
       </div>
       <ul class="checklist">
@@ -310,7 +294,7 @@
     <!-- Skills -->
     <section id="skills" class="reveal">
       <div class="section-head">
-        <span class="num">§06</span>
+        <span class="num">§ 06</span>
         <h2>Skills</h2>
       </div>
       <div class="skills-wrap">
@@ -351,6 +335,7 @@
 
   <!-- Footer -->
   <footer>
+    <div class="landscape" data-mode="static" data-seed="21" data-min="0.82,0.62" data-levels="24" aria-hidden="true"></div>
     <div class="footer-inner">
       <div class="footer-big">Always on the next<br />side quest<span>.</span></div>
       <div class="footer-meta">

@@ -1,16 +1,15 @@
 /* ====================================================
    Shared site script
-   - theme toggle (paper / chalkboard)
-   - scroll progress, reveal on scroll, active nav link
-   - count-up stats
-   - interactive function plot in the banner
+   - theme toggle (paper / night)
+   - reveal on scroll, active nav link, count-up stats
+   - loss landscapes: contour maps with live gradient descent
+   - "training" readout that converges as you scroll
    - easter egg: type "ice" for snowfall
 ==================================================== */
 (function () {
   const root = document.documentElement;
   root.classList.remove('no-js');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   const css = (name) => getComputedStyle(root).getPropertyValue(name).trim();
 
   /* ---------- Footer year ---------- */
@@ -23,7 +22,7 @@
   function setToggleLabel() {
     if (!toggle) return;
     const dark = root.dataset.theme === 'dark';
-    toggle.textContent = dark ? '◑ Paper' : '◐ Chalkboard';
+    toggle.textContent = dark ? '☼ Paper' : '☾ Night';
     toggle.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
   }
   setToggleLabel();
@@ -34,17 +33,6 @@
       setToggleLabel();
       window.dispatchEvent(new Event('themechange'));
     });
-  }
-
-  /* ---------- Scroll progress ---------- */
-  const bar = document.querySelector('.progress');
-  if (bar) {
-    const onScroll = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      bar.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
   }
 
   /* ---------- Reveal on scroll ---------- */
@@ -75,7 +63,6 @@
         }
       });
     }, { rootMargin: '-45% 0px -50% 0px' });
-    // Nothing is highlighted while you're up in the banner
     window.addEventListener('scroll', () => {
       if (window.scrollY < window.innerHeight * 0.5) navLinks.forEach((a) => a.classList.remove('active'));
     }, { passive: true });
@@ -111,207 +98,438 @@
     counters.forEach(runCount);
   }
 
-  /* ---------- Banner plot ---------- */
-  const plot = document.querySelector('canvas.plot');
-  if (plot) initPlot(plot);
+  /* ---------- Scroll = training: loss converges as you read ---------- */
+  const trainer = document.querySelector('.trainer');
+  if (trainer) {
+    const epochEl = trainer.querySelector('[data-epoch]');
+    const lossEl = trainer.querySelector('[data-train-loss]');
+    const fill = trainer.querySelector('.trainer-fill');
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const p = max > 0 ? Math.min(1, window.scrollY / max) : 1;
+      const epoch = Math.round(p * 100);
+      // A slightly noisy, exponentially decaying training loss
+      const loss = 2.3 * Math.exp(-4.2 * p) + 0.012 + 0.03 * Math.abs(Math.sin(epoch * 2.7)) * (1 - p);
+      epochEl.textContent = String(epoch).padStart(3, '0');
+      lossEl.textContent = loss.toFixed(3);
+      fill.style.transform = `scaleX(${p})`;
+      trainer.classList.toggle('done', p > 0.985);
+      trainer.classList.toggle('shown', window.scrollY > window.innerHeight * 0.45);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
+  }
 
-  function initPlot(canvas) {
-    const ctx = canvas.getContext('2d');
-    const banner = canvas.parentElement;
-    const eqEl = banner.querySelector('.equation');
-    const UNIT = 56; // px per unit (two graph-paper squares)
+  /* ====================================================
+     Loss landscapes
+     L(θ) is a sum of rotated Gaussian wells and hills on a
+     gentle bowl. Contours come from marching squares; the
+     path is gradient descent with momentum.
+  ==================================================== */
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6d2b79f5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
 
-    // Function families: click the banner to cycle through them
-    const families = [
-      { name: 'sin', f: (x) => Math.sin(x), label: (a, k) => `f(x) = <b>${a}</b>·sin(<b>${k}</b>x + t)` },
-      { name: 'square', label: (a, k) => `f(x) = <b>${a}</b>·Σ sin((2n−1)<b>${k}</b>x)/(2n−1)`,
-        f: (x) => { let s = 0; for (let n = 1; n <= 9; n += 2) s += Math.sin(n * x) / n; return s * 4 / Math.PI * 0.8; } },
-      { name: 'saw', label: (a, k) => `f(x) = <b>${a}</b>·Σ (−1)ⁿ⁺¹ sin(n<b>${k}</b>x)/n`,
-        f: (x) => { let s = 0; for (let n = 1; n <= 8; n++) s += (n % 2 ? 1 : -1) * Math.sin(n * x) / n; return s * 0.65; } },
-      { name: 'beat', label: (a, k) => `f(x) = <b>${a}</b>·sin(<b>${k}</b>x)·cos(x/3)`,
-        f: (x) => Math.sin(x) * Math.cos(x / 3.2) },
-    ];
-    let fam = 0;
+  // Build a loss function in normalised coords: u ∈ [0,1] (left→right), v ∈ [0,1] (top→bottom).
+  function makeLoss(seed, minU, minV, aspect, zone) {
+    const rnd = mulberry32(seed);
+    const terms = [];
+    const add = (u, v, amp, sx, sy, rot) => terms.push({ u, v, amp, sx, sy, c: Math.cos(rot), s: Math.sin(rot) });
 
-    let w = 0, h = 0, dpr = 1;
-    let region = 300; // twice the headline's vertical centre, in px
+    // Global minimum: deep, elongated well
+    add(minU, minV, -1.5, 0.24, 0.11, -0.3 + rnd() * 0.4);
+    add(minU + 0.015, minV + 0.01, -0.5, 0.05, 0.035, 0.2);
+    // Local minima (shallower) stay right of `zone`, so runs don't end behind the text
+    for (let i = 0; i < 5; i++) {
+      add(zone + rnd() * (0.94 - zone), 0.1 + rnd() * 0.8, -(0.18 + rnd() * 0.3), 0.04 + rnd() * 0.06, 0.035 + rnd() * 0.05, rnd() * Math.PI);
+    }
+    for (let i = 0; i < 6; i++) {
+      add(rnd(), rnd() * 1.1 - 0.05, 0.35 + rnd() * 0.5, 0.06 + rnd() * 0.12, 0.05 + rnd() * 0.1, rnd() * Math.PI);
+    }
+
+    function L(u, v) {
+      // Bowl centred on the global minimum, so the descent mostly finds it
+      const bu = (u - minU) * aspect, bv = v - minV;
+      let z = 0.8 * (bu * bu * 0.5 + bv * bv);
+      for (let i = 0; i < terms.length; i++) {
+        const t = terms[i];
+        const du = (u - t.u) * aspect, dv = v - t.v;
+        const a = (du * t.c + dv * t.s) / t.sx;
+        const b = (-du * t.s + dv * t.c) / t.sy;
+        z += t.amp * Math.exp(-0.5 * (a * a + b * b));
+      }
+      return z;
+    }
+    return L;
+  }
+
+  // Marching squares over a value grid → line segments per level
+  function contours(grid, cols, rows, step, levels, ctx, styleFor) {
+    const paths = levels.map(() => new Path2D());
+    for (let j = 0; j < rows - 1; j++) {
+      for (let i = 0; i < cols - 1; i++) {
+        const a = grid[j * cols + i], b = grid[j * cols + i + 1];
+        const c = grid[(j + 1) * cols + i + 1], d = grid[(j + 1) * cols + i];
+        const lo = Math.min(a, b, c, d), hi = Math.max(a, b, c, d);
+        const x = i * step, y = j * step;
+        for (let k = 0; k < levels.length; k++) {
+          const l = levels[k];
+          if (l < lo || l > hi) continue;
+          const idx = (a > l ? 8 : 0) | (b > l ? 4 : 0) | (c > l ? 2 : 0) | (d > l ? 1 : 0);
+          if (idx === 0 || idx === 15) continue;
+          const top = [x + step * (l - a) / (b - a), y];
+          const right = [x + step, y + step * (l - b) / (c - b)];
+          const bottom = [x + step * (l - d) / (c - d), y + step];
+          const left = [x, y + step * (l - a) / (d - a)];
+          const p = paths[k];
+          const seg = (p1, p2) => { p.moveTo(p1[0], p1[1]); p.lineTo(p2[0], p2[1]); };
+          switch (idx) {
+            case 1: case 14: seg(left, bottom); break;
+            case 2: case 13: seg(bottom, right); break;
+            case 3: case 12: seg(left, right); break;
+            case 4: case 11: seg(top, right); break;
+            case 6: case 9: seg(top, bottom); break;
+            case 7: case 8: seg(left, top); break;
+            case 5: seg(left, top); seg(bottom, right); break;
+            case 10: seg(top, right); seg(left, bottom); break;
+          }
+        }
+      }
+    }
+    paths.forEach((p, k) => { styleFor(k); ctx.stroke(p); });
+  }
+
+  function initLandscape(host) {
+    const mode = host.dataset.mode || 'live'; // live | static
+    const seed = parseInt(host.dataset.seed || '7', 10);
+    const [minUDesk, minV] = (host.dataset.min || '0.66,0.55').split(',').map(Number);
+    const levelsCount = parseInt(host.dataset.levels || '34', 10);
+    const section = host.closest('.hero') || host.parentElement;
+    const readStep = section.querySelector('[data-step]');
+    const readLoss = section.querySelector('[data-loss]');
+
+    const base = document.createElement('canvas');
+    const over = document.createElement('canvas');
+    base.className = 'lc-base';
+    over.className = 'lc-over';
+    host.append(base, over);
+    const bctx = base.getContext('2d');
+    const octx = over.getContext('2d');
+
+    let w = 0, h = 0, dpr = 1, L = null, minU = minUDesk;
     let colors = {};
-    const target = { a: 1.2, k: 1.1 };
-    const cur = { a: 1.2, k: 1.1 };
-    let t = 0;
-    let running = true;
-    let last = performance.now();
+    let globalMin = { x: 0, y: 0, z: 0 };
+    const trails = [];      // finished runs, drawn faintly
+    let run = null;         // current run
+    let pointer = null;
+    let visible = true;
+    let rafId = 0;
+
+    const toU = (x) => x / w;
+    const toV = (y) => y / h;
+    const Lpx = (x, y) => L(toU(x), toV(y));
 
     function readColors() {
-      colors = { ink: css('--ink'), soft: css('--ink-faint'), accent: css('--accent'), blue: css('--blue'), line: css('--line') };
+      colors = {
+        ink: css('--ink'), faint: css('--ink-faint'), accent: css('--accent'),
+        contour: css('--contour'), contourMajor: css('--contour-major'), bg: css('--bg'),
+      };
     }
 
-    function resize() {
+    function size() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = banner.clientWidth;
-      h = banner.clientHeight;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      // Centre the x-axis on the headline so the curve weaves behind the name
-      const h1 = banner.querySelector('h1');
-      if (h1) {
-        const r = h1.getBoundingClientRect();
-        region = (r.top + r.height / 2 - banner.getBoundingClientRect().top) * 2;
-      } else {
-        region = h * 0.6;
-      }
-      if (reduceMotion) draw();
+      w = host.clientWidth;
+      h = host.clientHeight;
+      [base, over].forEach((c) => { c.width = w * dpr; c.height = h * dpr; });
+      bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      octx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // On narrow screens put the minimum lower-right, away from the text
+      minU = w < 760 && host.dataset.minMobile ? Number(host.dataset.minMobile.split(',')[0]) : minUDesk;
+      const mv = w < 760 && host.dataset.minMobile ? Number(host.dataset.minMobile.split(',')[1]) : minV;
+      const zone = w < 760 ? 0 : parseFloat(host.dataset.zone || '0');
+      L = makeLoss(seed, minU, mv, w / h, zone);
+      drawContours();
+      trails.length = 0;
+      run = null;
     }
 
-    function f(x) {
-      return families[fam].f(cur.k * x + t);
+    function drawContours() {
+      const step = w > 1200 ? 6 : 5;
+      const cols = Math.ceil(w / step) + 1, rows = Math.ceil(h / step) + 1;
+      const grid = new Float32Array(cols * rows);
+      let lo = Infinity, gx = 0, gy = 0;
+      for (let j = 0; j < rows; j++) {
+        for (let i = 0; i < cols; i++) {
+          const z = Lpx(i * step, j * step);
+          grid[j * cols + i] = z;
+          if (z < lo) { lo = z; gx = i * step; gy = j * step; }
+        }
+      }
+      // Refine the true minimum with a short descent from the best grid cell
+      let p = { x: gx, y: gy };
+      for (let k = 0; k < 200; k++) {
+        const g = grad(p.x, p.y);
+        p = { x: p.x - g.x * 20, y: p.y - g.y * 20 };
+      }
+      globalMin = { x: p.x, y: p.y, z: Lpx(p.x, p.y) };
+
+      const sorted = Array.from(grid).sort((a, b) => a - b);
+      const hi = sorted[Math.floor(sorted.length * 0.985)];
+      const levels = [];
+      for (let k = 1; k <= levelsCount; k++) {
+        // Denser spacing near the bottom of wells, like the reference
+        const t = k / (levelsCount + 1);
+        levels.push(lo + (hi - lo) * Math.pow(t, 1.35));
+      }
+
+      bctx.clearRect(0, 0, w, h);
+      bctx.lineJoin = 'round';
+      contours(grid, cols, rows, step, levels, bctx, (k) => {
+        const major = k % 5 === 4;
+        bctx.strokeStyle = major ? colors.contourMajor : colors.contour;
+        bctx.lineWidth = major ? 1 : 0.7;
+      });
     }
 
-    function draw() {
-      ctx.clearRect(0, 0, w, h);
-      // Keep the plot in the empty space above the text
-      const oy = Math.round(region / 2);                          // x-axis position
-      const ox = Math.round(w * (w < 720 ? 0.6 : 0.72));           // y-axis position
-      const amp = Math.min(region * 0.3, 170) / (1.6 * 1.1) / UNIT;  // max |a·f(x)| ≈ 1.6·1.1
+    // Gradient in pixel space, scaled so steps behave the same at any size
+    function grad(x, y) {
+      const e = 0.6;
+      const s = Math.min(w, h);
+      return {
+        x: (Lpx(x + e, y) - Lpx(x - e, y)) / (2 * e) * s / 1000,
+        y: (Lpx(x, y + e) - Lpx(x, y - e)) / (2 * e) * s / 1000,
+      };
+    }
 
-      // Axes
-      ctx.strokeStyle = colors.ink;
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(0, oy); ctx.lineTo(w, oy);
-      ctx.moveTo(ox, 0); ctx.lineTo(ox, h);
-      ctx.stroke();
-
-      // Ticks + labels
-      ctx.fillStyle = colors.soft;
-      ctx.font = '11px "JetBrains Mono", monospace';
-      ctx.textAlign = 'center';
-      for (let px = ox % UNIT; px < w; px += UNIT) {
-        ctx.fillRect(px - 0.5, oy - 4, 1, 8);
-        const n = Math.round((px - ox) / UNIT);
-        if (n !== 0 && n % 2 === 0) ctx.fillText(n, px, oy + 18);
+    // Run gradient descent with momentum and resample the path into evenly spaced dots
+    function descend(x0, y0, eta = Math.min(w, h) * 0.3, beta = 0.95) {
+      const s = Math.min(w, h);
+      let x = x0, y = y0, vx = 0, vy = 0;
+      const raw = [{ x, y, z: Lpx(x, y), step: 0 }];
+      for (let k = 1; k < 900; k++) {
+        const g = grad(x, y);
+        vx = beta * vx - eta * g.x;
+        vy = beta * vy - eta * g.y;
+        // Cap the step so steep starts don't jump across the map
+        const sp = Math.hypot(vx, vy), cap = s * 0.03;
+        if (sp > cap) { vx *= cap / sp; vy *= cap / sp; }
+        x += vx; y += vy;
+        // Bounce off the edges so the whole path stays on the map
+        if (x < 4 || x > w - 4) { vx = -vx * 0.5; x = Math.max(4, Math.min(w - 4, x)); }
+        if (y < 4 || y > h - 4) { vy = -vy * 0.5; y = Math.max(4, Math.min(h - 4, y)); }
+        raw.push({ x, y, z: Lpx(x, y), step: k });
+        if (k > 30 && sp < 0.05 && Math.hypot(g.x, g.y) < 1e-4) break;
       }
-      ctx.textAlign = 'left';
-      ctx.fillText('x', w - 16, oy - 8);
-      ctx.fillText('y', ox + 8, 14);
-
-      // Derivative (dashed blue)
-      const step = 3;
-      ctx.setLineDash([5, 6]);
-      ctx.strokeStyle = colors.blue;
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      for (let px = 0; px <= w; px += step) {
-        const x = (px - ox) / UNIT;
-        const d = (f(x + 0.01) - f(x - 0.01)) / 0.02 * cur.a * amp * 0.35;
-        const py = oy - d * UNIT;
-        px === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      const gap = Math.max(8, Math.min(13, s / 60));
+      const dots = [raw[0]];
+      let need = gap;
+      for (let i = 1; i < raw.length; i++) {
+        const a = raw[i - 1], b = raw[i];
+        const seg = Math.hypot(b.x - a.x, b.y - a.y);
+        let pos = 0;
+        while (seg - pos >= need) {
+          pos += need;
+          const t = pos / seg;
+          dots.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, z: a.z + (b.z - a.z) * t, step: b.step });
+          need = gap;
+        }
+        need -= seg - pos;
       }
-      ctx.stroke();
-      ctx.setLineDash([]);
+      const end = raw[raw.length - 1];
+      const isGlobal = Math.hypot(end.x - globalMin.x, end.y - globalMin.y) < s * 0.05;
+      return { dots, end, steps: end.step, isGlobal, shown: 0, start: performance.now(), doneAt: 0, alpha: 1 };
+    }
 
-      // Main curve
-      ctx.strokeStyle = colors.accent;
-      ctx.lineWidth = 3.5;
-      ctx.lineJoin = 'round';
-      ctx.beginPath();
-      for (let px = 0; px <= w; px += step) {
-        const x = (px - ox) / UNIT;
-        const py = oy - f(x) * cur.a * amp * UNIT;
-        px === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    function randomStart() {
+      // Start somewhere high on the right-hand side, away from the text
+      const xMin = w < 760 ? 0.08 : 0.42;
+      for (let i = 0; i < 40; i++) {
+        const x = w * (xMin + Math.random() * (0.95 - xMin));
+        const y = h * (0.08 + Math.random() * 0.8);
+        if (Math.hypot(x - globalMin.x, y - globalMin.y) > Math.min(w, h) * 0.4) return { x, y };
       }
-      ctx.stroke();
+      return { x: w * 0.92, y: h * 0.12 };
+    }
 
-      // Tracing point with projections and tangent
-      const tx = Math.sin(t * 0.35) * (w * 0.32) / UNIT;
-      const tpx = ox + tx * UNIT;
-      const tpy = oy - f(tx) * cur.a * amp * UNIT;
-      const slope = (f(tx + 0.01) - f(tx - 0.01)) / 0.02 * cur.a * amp;
-
-      ctx.strokeStyle = colors.soft;
-      ctx.lineWidth = 1;
-      ctx.setLineDash([3, 4]);
-      ctx.beginPath();
-      ctx.moveTo(tpx, tpy); ctx.lineTo(tpx, oy);
-      ctx.moveTo(tpx, tpy); ctx.lineTo(ox, tpy);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      const len = 70 / Math.sqrt(1 + slope * slope);
-      ctx.strokeStyle = colors.ink;
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(tpx - len, tpy + slope * len);
-      ctx.lineTo(tpx + len, tpy - slope * len);
-      ctx.stroke();
-
-      ctx.fillStyle = colors.accent;
-      ctx.strokeStyle = colors.ink;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(tpx, tpy, 6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = colors.ink;
-      ctx.font = '12px "JetBrains Mono", monospace';
-      ctx.fillText(`(${tx.toFixed(2)}, ${(f(tx) * cur.a).toFixed(2)})`, tpx + 12, tpy - 12);
-
-      if (eqEl) {
-        eqEl.innerHTML = families[fam].label(cur.a.toFixed(2), cur.k.toFixed(2)) +
-          ` &nbsp;<span style="color:${colors.blue}">- - f′(x)</span>`;
+    function startRun(x, y) {
+      if (run) { run.alpha = 0.32; trails.push(run); }
+      while (trails.length > 3) trails.shift();
+      trails.forEach((t, i) => { t.alpha = 0.12 + 0.07 * i; });
+      if (x != null) { run = descend(x, y); return; }
+      // Auto-runs mostly show a successful descent; one in five may get stuck
+      const allowLocal = trails.length > 0 && Math.random() < 0.2;
+      for (let i = 0; i < 12; i++) {
+        const p = randomStart();
+        run = descend(p.x, p.y);
+        if (run.isGlobal || allowLocal) break;
       }
     }
 
-    function frame(now) {
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-      t += dt * 0.9;
-      cur.a += (target.a - cur.a) * 0.06;
-      cur.k += (target.k - cur.k) * 0.06;
-      draw();
-      if (running) requestAnimationFrame(frame);
+    function label(text, x, y, sub) {
+      octx.font = 'italic 15px "Instrument Serif", Georgia, serif';
+      octx.fillStyle = colors.faint;
+      octx.textAlign = 'left';
+      octx.fillText(text, x, y);
+      if (sub) {
+        const m = octx.measureText(text).width;
+        octx.font = 'italic 10px "Instrument Serif", Georgia, serif';
+        octx.fillText(sub, x + m + 1, y + 4);
+      }
     }
 
-    banner.addEventListener('pointermove', (e) => {
-      const r = banner.getBoundingClientRect();
-      const nx = (e.clientX - r.left) / r.width;
-      const ny = (e.clientY - r.top) / r.height;
-      target.k = 0.5 + nx * 2.2;
-      target.a = 1.6 - ny * 1.2;
-      if (reduceMotion) { cur.a = target.a; cur.k = target.k; draw(); }
+    function drawRun(r, count, alpha) {
+      octx.globalAlpha = alpha;
+      octx.fillStyle = colors.ink;
+      for (let i = 0; i < count; i++) {
+        const d = r.dots[i];
+        octx.beginPath();
+        octx.arc(d.x, d.y, i === 0 ? 2.6 : 1.7, 0, Math.PI * 2);
+        octx.fill();
+      }
+      octx.globalAlpha = 1;
+    }
+
+    function drawTarget(x, y, a) {
+      octx.globalAlpha = a;
+      octx.strokeStyle = colors.ink;
+      octx.lineWidth = 0.8;
+      octx.beginPath(); octx.arc(x, y, 9, 0, Math.PI * 2); octx.stroke();
+      octx.beginPath(); octx.arc(x, y, 4, 0, Math.PI * 2); octx.stroke();
+      octx.beginPath();
+      octx.moveTo(x - 14, y); octx.lineTo(x - 10, y);
+      octx.moveTo(x + 10, y); octx.lineTo(x + 14, y);
+      octx.moveTo(x, y - 14); octx.lineTo(x, y - 10);
+      octx.moveTo(x, y + 10); octx.lineTo(x, y + 14);
+      octx.stroke();
+      octx.fillStyle = colors.ink;
+      octx.beginPath(); octx.arc(x, y, 1.6, 0, Math.PI * 2); octx.fill();
+      octx.globalAlpha = 1;
+    }
+
+    function drawPointer() {
+      if (!pointer) return;
+      const g = grad(pointer.x, pointer.y);
+      const m = Math.hypot(g.x, g.y);
+      if (m < 1e-6) return;
+      const len = Math.min(46, 8 + m * 9000);
+      const ux = -g.x / m, uy = -g.y / m;
+      const ex = pointer.x + ux * len, ey = pointer.y + uy * len;
+      octx.strokeStyle = colors.accent;
+      octx.fillStyle = colors.accent;
+      octx.lineWidth = 1.4;
+      octx.beginPath(); octx.moveTo(pointer.x, pointer.y); octx.lineTo(ex, ey); octx.stroke();
+      octx.beginPath();
+      octx.moveTo(ex + ux * 6, ey + uy * 6);
+      octx.lineTo(ex - uy * 4, ey + ux * 4);
+      octx.lineTo(ex + uy * 4, ey - ux * 4);
+      octx.closePath(); octx.fill();
+      octx.beginPath(); octx.arc(pointer.x, pointer.y, 2.4, 0, Math.PI * 2); octx.fill();
+      label('−∇L', ex + 8, ey + 4);
+    }
+
+    function readout(r, i) {
+      if (!readStep || !r) return;
+      const d = r.dots[Math.max(0, i - 1)];
+      readStep.textContent = String(d.step).padStart(3, '0');
+      readLoss.textContent = Math.max(0, d.z - globalMin.z + 0.0021).toFixed(4);
+      const done = i >= r.dots.length;
+      section.classList.toggle('is-local', done && !r.isGlobal);
+      section.classList.toggle('is-global', done && r.isGlobal);
+    }
+
+    function render(now) {
+      octx.clearRect(0, 0, w, h);
+      trails.forEach((t) => drawRun(t, t.dots.length, t.alpha));
+      if (run) {
+        const perSec = 34;
+        const n = mode === 'static' || reduceMotion
+          ? run.dots.length
+          : Math.min(run.dots.length, 1 + Math.floor(((now - run.start) / 1000) * perSec));
+        drawRun(run, n, 1);
+        const s0 = run.dots[0];
+        label('θ', s0.x + 8, s0.y - 6, '0');
+        if (n < run.dots.length) {
+          const head = run.dots[n - 1];
+          octx.strokeStyle = colors.accent;
+          octx.lineWidth = 1.5;
+          octx.beginPath(); octx.arc(head.x, head.y, 5, 0, Math.PI * 2); octx.stroke();
+        } else {
+          if (!run.doneAt) run.doneAt = now;
+          const a = mode === 'static' || reduceMotion ? 1 : Math.min(1, (now - run.doneAt) / 500);
+          drawTarget(run.end.x, run.end.y, a);
+          octx.globalAlpha = a;
+          label(run.isGlobal ? 'θ*' : 'local min', run.end.x + 14, run.end.y - 14);
+          octx.globalAlpha = 1;
+          if (mode === 'live' && !reduceMotion && now - run.doneAt > 4200) startRun();
+        }
+        readout(run, n);
+      }
+      drawPointer();
+    }
+
+    function loop(now) {
+      render(now);
+      if (visible && mode === 'live' && !reduceMotion) rafId = requestAnimationFrame(loop);
+    }
+
+    function kick() {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(loop);
+    }
+
+    // Interaction (live maps only): hover shows −∇L, click drops a new θ₀
+    if (mode === 'live') {
+      section.addEventListener('pointermove', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        const r = host.getBoundingClientRect();
+        pointer = { x: e.clientX - r.left, y: e.clientY - r.top };
+        if (reduceMotion) render(performance.now());
+      });
+      section.addEventListener('pointerleave', () => { pointer = null; if (reduceMotion) render(performance.now()); });
+      section.addEventListener('click', (e) => {
+        if (e.target.closest('a, button, img, h1, p')) return;
+        const r = host.getBoundingClientRect();
+        startRun(e.clientX - r.left, e.clientY - r.top);
+        section.classList.add('touched');
+        if (reduceMotion) render(performance.now());
+      });
+    }
+
+    let resizeT;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeT);
+      resizeT = setTimeout(() => {
+        if (host.clientWidth === w && Math.abs(host.clientHeight - h) < 80) return; // ignore mobile URL-bar jitter
+        size(); startRun(); kick();
+      }, 150);
     });
+    window.addEventListener('themechange', () => { readColors(); drawContours(); kick(); });
 
-    banner.addEventListener('click', (e) => {
-      if (e.target.closest('a, button')) return;
-      fam = (fam + 1) % families.length;
-      if (reduceMotion) draw();
-    });
-
-    window.addEventListener('resize', resize);
-    window.addEventListener('themechange', () => { readColors(); if (reduceMotion) draw(); });
-
-    readColors();
-    resize();
-    if (document.fonts) document.fonts.ready.then(resize);
-
-    if (reduceMotion) {
-      t = 1;
-      draw();
-      return;
+    function boot() {
+      readColors();
+      size();
+      startRun();
+      kick();
     }
+    boot();
+    if (document.fonts) document.fonts.ready.then(() => kick());
 
-    // Only animate while the banner is on screen
-    if ('IntersectionObserver' in window) {
+    if ('IntersectionObserver' in window && mode === 'live') {
       new IntersectionObserver(([entry]) => {
-        const was = running;
-        running = entry.isIntersecting;
-        if (running && !was) { last = performance.now(); requestAnimationFrame(frame); }
-      }).observe(banner);
+        const was = visible;
+        visible = entry.isIntersecting;
+        if (visible && !was) kick();
+      }).observe(host);
     }
-    requestAnimationFrame(frame);
   }
+
+  document.querySelectorAll('.landscape').forEach(initLandscape);
 
   /* ---------- Easter egg: type "ice" ---------- */
   let typed = '';
@@ -336,7 +554,7 @@
     const end = performance.now() + 7000;
     (function fall(now) {
       g.clearRect(0, 0, W, H);
-      g.fillStyle = css('--blue');
+      g.fillStyle = css('--ink-faint');
       flakes.forEach((p) => {
         p.y += p.s;
         p.x += Math.sin((now / 600) + p.d) * 0.6;
@@ -350,5 +568,5 @@
     })(performance.now());
   }
 
-  console.log('%cHey, you opened the console 👋 Try typing "ice" on the page.', 'font: 600 14px monospace; color: #ff4d1a');
+  console.log('%cθ ← θ − η∇L(θ)  ·  psst, type "ice" on the page.', 'font: italic 15px Georgia, serif; color: #8a7f6a');
 })();
