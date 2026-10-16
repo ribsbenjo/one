@@ -12,11 +12,6 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const css = (name) => getComputedStyle(root).getPropertyValue(name).trim();
 
-  /* ---------- Footer year ---------- */
-  document.querySelectorAll('[data-year]').forEach((el) => {
-    el.textContent = new Date().getFullYear();
-  });
-
   /* ---------- Theme toggle ---------- */
   const toggle = document.querySelector('.theme-toggle');
   function setToggleLabel() {
@@ -372,13 +367,13 @@
     }
 
     function label(text, x, y, sub) {
-      octx.font = 'italic 15px "Instrument Serif", Georgia, serif';
+      octx.font = 'italic 15px "Newsreader", Georgia, serif';
       octx.fillStyle = colors.faint;
       octx.textAlign = 'left';
       octx.fillText(text, x, y);
       if (sub) {
         const m = octx.measureText(text).width;
-        octx.font = 'italic 10px "Instrument Serif", Georgia, serif';
+        octx.font = 'italic 10px "Newsreader", Georgia, serif';
         octx.fillText(sub, x + m + 1, y + 4);
       }
     }
@@ -530,6 +525,28 @@
   }
 
   document.querySelectorAll('.landscape').forEach(initLandscape);
+
+  /* ---------- Contact: the email is only assembled on click, so scrapers never see it ---------- */
+  document.querySelectorAll('[data-email]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const addr = btn.dataset.email.split(',').map((n) => String.fromCharCode(n ^ 7)).join('');
+      const out = btn.querySelector('[data-email-out]');
+      if (btn.dataset.revealed) {
+        try { navigator.clipboard.writeText(addr); out.textContent = 'Copied ✓'; } catch (e) {}
+        setTimeout(() => { out.textContent = addr; }, 1400);
+        return;
+      }
+      btn.dataset.revealed = '1';
+      out.textContent = addr;
+      btn.querySelector('.arrow').textContent = '⧉';
+      btn.setAttribute('aria-label', `Copy email address ${addr}`);
+      const mail = document.createElement('a');
+      mail.href = `mailto:${addr}`;
+      mail.className = 'contact-mailto';
+      mail.textContent = 'Open in mail app ↗';
+      btn.parentElement.appendChild(mail);
+    });
+  });
 
   /* ---------- Easter egg: type "ice" ---------- */
   let typed = '';
