@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 
 <body>
@@ -246,7 +246,11 @@
           <div class="card-body">
             <div class="index">01</div>
             <h3>EVK App</h3>
-            <p>The official app of EVK College for Advanced Studies: events, programmes, forms and member dashboards in one place, with push notifications and Live Activities.</p>
+            <p>The official app of EVK College for Advanced Studies: events, programmes, forms and member dashboards in one place.</p>
+            <ul class="impact">
+              <li>Migrated the organisation’s transactions from Excel sheets to SQL and automated them in the app</li>
+              <li><b>≈ 2 hours</b> of manual work saved every week for a 73-member organisation</li>
+            </ul>
             <a href="https://apps.apple.com/hu/app/evk/id6760043012" class="btn" target="_blank" rel="noopener">App Store ↗</a>
           </div>
         </div>
@@ -257,7 +261,11 @@
           <div class="card-body">
             <div class="index">02</div>
             <h3>EVK CRM</h3>
-            <p>Internal CRM for EVK’s partner relations: companies, contacts and pipelines per committee, Gmail sync, mass emails with follow-up sequences, tasks and reports.</p>
+            <p>Internal CRM for EVK’s partner relations: companies, contacts, pipelines per committee, Gmail sync and follow-up sequences.</p>
+            <ul class="impact">
+              <li>Reviewed the old CRM and automated <b>50+</b> manual tasks</li>
+              <li>Found and fixed <b>150+</b> bugs</li>
+            </ul>
             <span class="btn btn-outline btn-static">Internal tool</span>
           </div>
         </div>
@@ -309,10 +317,10 @@
         <canvas class="lab-3d" aria-label="3D loss surface with four optimizers descending from the same starting point"></canvas>
         <div class="lab-side">
           <p>
-            Four optimizers start from the same <span class="math">θ₀</span> on one loss surface:
-            a long, narrow valley with a hill in the way and a shallow trap. Same gradients,
-            different update rules. Plain SGD crawls, momentum overshoots,
-            and the adaptive methods rescale each direction.
+            Four optimizers start from the same <span class="math">θ₀</span> on a log-scaled
+            Rosenbrock function, a classic benchmark with a long, curved “banana” valley.
+            Same gradients, different update rules: plain SGD crawls along the valley floor,
+            momentum builds up speed, and Adam rescales each direction on its own.
           </p>
           <ul class="lab-legend">
             <li data-opt="sgd"><i></i>SGD<span data-loss>—</span></li>
@@ -395,27 +403,29 @@
       <div class="section-head">
         <span class="num">§ 08</span>
         <h2>Contact</h2>
-        <span class="aside">replies within a day</span>
       </div>
       <div class="contact">
-        <p class="big">Have a project, a case or a side quest in mind? <em>Let’s talk.</em></p>
-        <ul class="contact-links">
-          <li>
-            <button type="button" class="contact-link" data-email="101,98,105,109,102,106,110,105,117,110,101,110,125,116,102,117,51,52,71,96,106,102,110,107,41,100,104,106">
-              <span class="k">email</span><span class="v" data-email-out>Show email</span><span class="arrow">→</span>
-            </button>
-          </li>
-          <li>
-            <a class="contact-link" href="https://www.linkedin.com/in/benj%C3%A1min-ribizs%C3%A1r-5321562bb/" target="_blank" rel="noopener">
-              <span class="k">linkedin</span><span class="v">Benjámin Ribizsár</span><span class="arrow">↗</span>
-            </a>
-          </li>
-          <li>
-            <a class="contact-link" href="https://www.instagram.com/beniribizsar/" target="_blank" rel="noopener">
-              <span class="k">instagram</span><span class="v">@beniribizsar</span><span class="arrow">↗</span>
-            </a>
-          </li>
-        </ul>
+        <p class="contact-lede">Working on a project, a case or an automation idea? I’m happy to talk.</p>
+        <div class="contact-cards">
+          <button type="button" class="contact-card" data-email="101,98,105,109,102,106,110,105,117,110,101,110,125,116,102,117,51,52,71,96,106,102,110,107,41,100,104,106">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></svg>
+            <span class="k">Email</span>
+            <span class="v" data-email-out>Click to show</span>
+            <span class="arrow" aria-hidden="true">→</span>
+          </button>
+          <a class="contact-card" href="https://www.linkedin.com/in/benj%C3%A1min-ribizs%C3%A1r-5321562bb/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 10.5V16M8 7.6v.1M12 16v-3.2a2.3 2.3 0 0 1 4.6 0V16M12 10.5V16"/></svg>
+            <span class="k">LinkedIn</span>
+            <span class="v">Benjámin Ribizsár</span>
+            <span class="arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="contact-card" href="https://www.instagram.com/beniribizsar/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.2 6.8v.1"/></svg>
+            <span class="k">Instagram</span>
+            <span class="v">@beniribizsar</span>
+            <span class="arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
       </div>
     </section>
 
@@ -434,7 +444,7 @@
     </div>
   </footer>
 
-  <script src="script.js"></script>
-  <script src="lab.js"></script>
+  <script src="script.js?v=3"></script>
+  <script src="lab.js?v=3"></script>
 </body>
 </html>

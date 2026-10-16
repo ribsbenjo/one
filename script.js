@@ -540,11 +540,12 @@
       out.textContent = addr;
       btn.querySelector('.arrow').textContent = '⧉';
       btn.setAttribute('aria-label', `Copy email address ${addr}`);
+      btn.title = 'Click to copy';
       const mail = document.createElement('a');
       mail.href = `mailto:${addr}`;
       mail.className = 'contact-mailto';
-      mail.textContent = 'Open in mail app ↗';
-      btn.parentElement.appendChild(mail);
+      mail.textContent = 'Open in your mail app ↗';
+      (btn.closest('.contact') || btn.parentElement).appendChild(mail);
     });
   });
 

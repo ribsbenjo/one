@@ -19,21 +19,16 @@
   const lrOut = lab.querySelector('[data-lr-out]');
   const restartBtn = lab.querySelector('[data-restart]');
 
-  /* ---------- Loss surface on [-3, 3]² ---------- */
+  /* ---------- Loss surface on [-3, 3]²: a log-scaled Rosenbrock "banana" valley ---------- */
   const R = 3;
-  const rot = 0.55, cr = Math.cos(rot), sr = Math.sin(rot);
-  function f(x, y) {
-    // A long, narrow, tilted valley (hard for plain SGD) ...
-    const u = cr * (x - 0.9) + sr * (y - 0.4);
-    const v = -sr * (x - 0.9) + cr * (y - 0.4);
-    let z = 1 - Math.exp(-(0.07 * u * u + 1.1 * v * v));
-    // ... a hill in the way and a shallow trap
-    z += 0.38 * Math.exp(-((x + 0.9) ** 2 + (y - 1.6) ** 2) / 0.55);
-    z -= 0.22 * Math.exp(-((x + 1.7) ** 2 + (y + 1.5) ** 2) / 0.35);
-    return z + 0.012 * (x * x + y * y);
-  }
+  const toRosen = (X, Y) => [X * 0.72, Y * 0.72 + 0.9];
+  const rosen = (X, Y) => { const [x, y] = toRosen(X, Y); return (1 - x) ** 2 + 8 * (y - x * x) ** 2; };
+  let rmax = 0;
+  for (let i = 0; i <= 60; i++) for (let j = 0; j <= 60; j++) rmax = Math.max(rmax, rosen(-R + i / 10, -R + j / 10));
+  const LOGMAX = Math.log(1 + rmax);
+  function f(x, y) { return Math.log(1 + rosen(x, y)) / LOGMAX; }
   function grad(x, y) {
-    const e = 1e-3;
+    const e = 1e-4;
     return [(f(x + e, y) - f(x - e, y)) / (2 * e), (f(x, y + e) - f(x, y - e)) / (2 * e)];
   }
   // Global minimum, found once by brute force + refinement
@@ -49,19 +44,19 @@
 
   /* ---------- Optimizers ---------- */
   const OPTS = [
-    { key: 'sgd', name: 'SGD', lr: 0.9,
+    { key: 'sgd', name: 'SGD', lr: 0.5,
       step(s, g, lr) { s.x -= lr * g[0]; s.y -= lr * g[1]; } },
-    { key: 'mom', name: 'Momentum', lr: 0.12,
+    { key: 'mom', name: 'Momentum', lr: 0.15,
       step(s, g, lr) {
-        s.vx = 0.92 * s.vx + g[0]; s.vy = 0.92 * s.vy + g[1];
+        s.vx = 0.9 * s.vx + g[0]; s.vy = 0.9 * s.vy + g[1];
         s.x -= lr * s.vx; s.y -= lr * s.vy;
       } },
-    { key: 'rms', name: 'RMSProp', lr: 0.025,
+    { key: 'rms', name: 'RMSProp', lr: 0.02,
       step(s, g, lr) {
         s.sx = 0.9 * s.sx + 0.1 * g[0] * g[0]; s.sy = 0.9 * s.sy + 0.1 * g[1] * g[1];
         s.x -= lr * g[0] / (Math.sqrt(s.sx) + 1e-8); s.y -= lr * g[1] / (Math.sqrt(s.sy) + 1e-8);
       } },
-    { key: 'adam', name: 'Adam', lr: 0.06,
+    { key: 'adam', name: 'Adam', lr: 0.08,
       step(s, g, lr) {
         const b1 = 0.9, b2 = 0.999;
         s.t++;
@@ -72,7 +67,7 @@
         s.y -= lr * (s.my / c1) / (Math.sqrt(s.sy / c2) + 1e-8);
       } },
   ];
-  const STEPS = 260;
+  const STEPS = 300;
   let runners = [];
   let stepN = 0, holdUntil = 0;
   let lrScale = 1;
@@ -82,11 +77,9 @@
 
   function newRace(x0, y0) {
     if (x0 == null) {
-      // Start high up on the far side, away from the minimum
-      const a = Math.random() * Math.PI * 2;
-      x0 = Math.max(-2.7, Math.min(2.7, -1.2 + Math.cos(a) * 1.5));
-      y0 = Math.max(-2.7, Math.min(2.7, 0.8 + Math.sin(a) * 1.6));
-      if (f(x0, y0) < 0.6) { x0 = -2.4; y0 = 2.2; }
+      const starts = [[-2.4, 2.4], [-2.2, -2.0], [2.4, -2.4], [-2.6, 0.2], [1.5, 2.6]];
+      [x0, y0] = starts[Math.floor(Math.random() * starts.length)];
+      x0 += (Math.random() - 0.5) * 0.3; y0 += (Math.random() - 0.5) * 0.3;
     }
     runners = OPTS.map((o) => ({
       o, s: { x: x0, y: y0, vx: 0, vy: 0, sx: 0, sy: 0, mx: 0, my: 0, t: 0 },
@@ -112,9 +105,9 @@
   }
 
   /* ---------- Camera ---------- */
-  let yaw = -0.75, pitch = 0.62, autoSpin = true;
+  let yaw = -0.5, pitch = 0.95, autoSpin = true;
   let W = 0, H = 0, dpr = 1, scale = 1;
-  const ZH = 1.7; // vertical exaggeration
+  const ZH = 1.5; // vertical exaggeration
 
   function project(x, y, z) {
     // world: x right, y forward, z up → rotate around z by yaw, tilt by pitch
@@ -126,13 +119,13 @@
     const depth = Y * cp + Z * sp;
     const up = Z * cp - Y * sp;
     const persp = 9 / (9 + depth);
-    return [W / 2 + X * scale * persp, H * 0.47 - up * scale * persp, depth];
+    return [W / 2 + X * scale * persp, H * 0.53 - up * scale * persp, depth];
   }
 
   let colors = {};
   function readColors() {
     colors = {
-      ink: css('--ink'), faint: css('--ink-faint'), line: css('--line'), contour: css('--contour'),
+      ink: css('--ink'), paper: css('--paper'), accent: css('--accent'), faint: css('--ink-faint'), line: css('--line'), contour: css('--contour'),
       sgd: css('--c-sgd'), mom: css('--c-mom'), rms: css('--c-rms'), adam: css('--c-adam'),
     };
   }
@@ -142,14 +135,14 @@
     W = view.clientWidth; H = view.clientHeight;
     view.width = W * dpr; view.height = H * dpr;
     vctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    scale = Math.min(W, H * 1.3) / 8.6;
+    scale = Math.min(W, H * 1.35) / 8.8;
     const cw = curve.clientWidth, ch = curve.clientHeight;
     curve.width = cw * dpr; curve.height = ch * dpr;
     cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
-  // Precomputed surface heights
-  const N = 36;
+  // Precomputed surface heights and per-cell shading
+  const N = 44;
   const surf = [];
   for (let j = 0; j <= N; j++) {
     const row = [];
@@ -159,27 +152,52 @@
     }
     surf.push(row);
   }
+  // Lambert shading from a light up and to the left
+  const cells = [];
+  const L = [-0.45, 0.35, 0.82];
+  const cell = (2 * R) / N;
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+    const a = surf[j][i], b = surf[j][i + 1], d = surf[j + 1][i];
+    const dzx = (b[2] - a[2]) * ZH / cell, dzy = (d[2] - a[2]) * ZH / cell;
+    const len = Math.hypot(dzx, dzy, 1);
+    const shade = Math.max(0, (-dzx * L[0] - dzy * L[1] + L[2]) / len);
+    const zc = (a[2] + b[2] + d[2] + surf[j + 1][i + 1][2]) / 4;
+    cells.push({ i, j, shade, zc });
+  }
 
   function drawSurface() {
-    vctx.lineWidth = 0.8;
     const P = surf.map((row) => row.map((p) => project(p[0], p[1], p[2])));
-    // Shade lines by height: low = darker ink, high = faint
-    for (let j = 0; j <= N; j++) {
-      for (let i = 0; i < N; i++) {
-        const za = surf[j][i][2], a = P[j][i], b = P[j][i + 1];
-        vctx.globalAlpha = 0.16 + 0.34 * (1 - Math.min(1, za));
-        vctx.strokeStyle = colors.ink;
-        vctx.beginPath(); vctx.moveTo(a[0], a[1]); vctx.lineTo(b[0], b[1]); vctx.stroke();
+    const order = cells.map((c) => ({ c, d: (P[c.j][c.i][2] + P[c.j + 1][c.i + 1][2]) / 2 })).sort((a, b) => b.d - a.d);
+    order.forEach(({ c }) => {
+      const a = P[c.j][c.i], b = P[c.j][c.i + 1], e = P[c.j + 1][c.i + 1], d = P[c.j + 1][c.i];
+      vctx.beginPath();
+      vctx.moveTo(a[0], a[1]); vctx.lineTo(b[0], b[1]); vctx.lineTo(e[0], e[1]); vctx.lineTo(d[0], d[1]); vctx.closePath();
+      // Paper base, soft shadow from the light, accent tint on the valley floor
+      vctx.globalAlpha = 1;
+      vctx.fillStyle = colors.paper;
+      vctx.fill();
+      vctx.strokeStyle = colors.paper;   // hides hairline seams between cells
+      vctx.lineWidth = 0.6;
+      vctx.stroke();
+      vctx.globalAlpha = 0.03 + 0.22 * (1 - c.shade);
+      vctx.fillStyle = colors.ink;
+      vctx.fill();
+      const low = Math.pow(1 - c.zc, 4);
+      if (low > 0.02) {
+        vctx.globalAlpha = 0.28 * low;
+        vctx.fillStyle = colors.accent;
+        vctx.fill();
       }
-    }
-    for (let i = 0; i <= N; i++) {
-      for (let j = 0; j < N; j++) {
-        const za = surf[j][i][2], a = P[j][i], b = P[j + 1][i];
-        vctx.globalAlpha = 0.16 + 0.34 * (1 - Math.min(1, za));
-        vctx.strokeStyle = colors.ink;
-        vctx.beginPath(); vctx.moveTo(a[0], a[1]); vctx.lineTo(b[0], b[1]); vctx.stroke();
-      }
-    }
+    });
+    vctx.globalAlpha = 1;
+    // Sparse grid lines on top, like a wire overlay
+    vctx.lineWidth = 0.6;
+    vctx.strokeStyle = colors.ink;
+    vctx.globalAlpha = 0.16;
+    vctx.beginPath();
+    for (let j = 0; j <= N; j += 4) P[j].forEach((p, i) => (i ? vctx.lineTo(p[0], p[1]) : vctx.moveTo(p[0], p[1])));
+    for (let i = 0; i <= N; i += 4) for (let j = 0; j <= N; j++) { const p = P[j][i]; j ? vctx.lineTo(p[0], p[1]) : vctx.moveTo(p[0], p[1]); }
+    vctx.stroke();
     vctx.globalAlpha = 1;
   }
 
@@ -205,6 +223,14 @@
       vctx.lineWidth = 1;
       vctx.stroke();
     });
+    // Minimum marker
+    const m = project(1 / 0.72, 0.1 / 0.72, 0.012);
+    vctx.strokeStyle = colors.ink;
+    vctx.lineWidth = 1;
+    vctx.beginPath(); vctx.arc(m[0], m[1], 8, 0, Math.PI * 2); vctx.stroke();
+    vctx.fillStyle = colors.ink;
+    vctx.font = 'italic 15px "Newsreader", Georgia, serif';
+    vctx.fillText('θ*', m[0] + 11, m[1] + 4);
     // Start marker
     const s = runners[0].path[0];
     const q = project(s[0], s[1], s[2] + 0.012);
@@ -263,8 +289,8 @@
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
     if (autoSpin && !dragging) yaw += dt * 0.12;
-    // Two optimizer steps per frame ≈ 4 s per race
-    if (!advance() || !advance()) {
+    // One optimizer step per frame ≈ 5 s per race
+    if (!advance()) {
       if (!holdUntil) holdUntil = now + 2600;
       else if (now > holdUntil) newRace();
     }
@@ -308,7 +334,7 @@
 
   readColors();
   size();
-  newRace(-2.3, 2.1);
+  newRace(-2.4, 2.4);
 
   if (reduceMotion) {
     while (advance());
