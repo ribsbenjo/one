@@ -156,6 +156,8 @@ header {
 }
 
 .theme-toggle {
+  display: inline-flex;
+  gap: 0.4em;
   font: 500 0.78rem var(--font-mono);
   color: var(--ink);
   background: transparent;
@@ -168,6 +170,28 @@ header {
 }
 
 .theme-toggle:hover { border-color: var(--ink-faint); background: var(--paper); }
+
+.lang-toggle {
+  display: inline-flex;
+  font: 500 0.72rem var(--font-mono);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 2px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.lang-toggle span {
+  padding: 0.26rem 0.5rem;
+  border-radius: 999px;
+  color: var(--ink-faint);
+  transition: background 0.2s, color 0.2s;
+}
+
+.lang-toggle:hover { border-color: var(--accent); }
+.lang-toggle:not([data-current="hu"]) [data-l="en"],
+.lang-toggle[data-current="hu"] [data-l="hu"] { background: var(--ink); color: var(--paper); }
 
 .tok-toggle {
   display: inline-flex;
@@ -322,6 +346,10 @@ header {
 
 .is-global .readout .status::before { content: "converged → global minimum"; color: var(--accent); }
 .is-local .readout .status::before { content: "stuck in a local minimum — click to restart"; }
+
+html[lang="hu"] .readout .status::before { content: "ereszkedés…"; }
+html[lang="hu"] .is-global .readout .status::before { content: "konvergált → globális minimum"; }
+html[lang="hu"] .is-local .readout .status::before { content: "lokális minimumban ragadt — kattints az újrakezdéshez"; }
 
 .formula {
   right: 1.6rem;
@@ -1465,6 +1493,11 @@ footer .landscape { opacity: 0.8; }
   .navbar { padding: 0.75rem 1rem; }
   .nav-links { display: none; }
   .tok-toggle { padding-right: 0.65rem; }
+  .theme-toggle .tt { display: none; }
+  .theme-toggle, .tok-toggle { padding-left: 0.6rem; padding-right: 0.6rem; }
+  .tok-toggle { padding-left: 0.3rem; }
+  .nav-right { gap: 0.4rem; }
+  .logo { font-size: 1.25rem; }
   .hero { min-height: auto; align-items: flex-start; }
   .hero-inner { padding: 3rem 1rem 9rem; }
   .hero-small .hero-inner { padding-bottom: 7rem; }

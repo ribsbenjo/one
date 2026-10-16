@@ -11,16 +11,19 @@
   root.classList.remove('no-js');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const css = (name) => getComputedStyle(root).getPropertyValue(name).trim();
+  const tr = (key, vars) => (window.i18n ? window.i18n.t(key, vars) : key);
 
   /* ---------- Theme toggle ---------- */
   const toggle = document.querySelector('.theme-toggle');
   function setToggleLabel() {
     if (!toggle) return;
     const dark = root.dataset.theme === 'dark';
-    toggle.textContent = dark ? '☼ Paper' : '☾ Night';
-    toggle.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+    const [icon, ...words] = (dark ? tr('theme_paper') : tr('theme_night')).split(' ');
+    toggle.innerHTML = `<span aria-hidden="true">${icon}</span><span class="tt">${words.join(' ')}</span>`;
+    toggle.setAttribute('aria-label', dark ? tr('theme_to_light') : tr('theme_to_dark'));
   }
   setToggleLabel();
+  window.addEventListener('langchange', setToggleLabel);
   if (toggle) {
     toggle.addEventListener('click', () => {
       root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
@@ -459,7 +462,7 @@
           const a = mode === 'static' || reduceMotion ? 1 : Math.min(1, (now - run.doneAt) / 500);
           drawTarget(run.end.x, run.end.y, a);
           octx.globalAlpha = a;
-          label(run.isGlobal ? 'θ*' : 'local min', run.end.x + 14, run.end.y - 14);
+          label(run.isGlobal ? 'θ*' : tr('local_min'), run.end.x + 14, run.end.y - 14);
           octx.globalAlpha = 1;
           if (mode === 'live' && !reduceMotion && now - run.doneAt > 4200) startRun();
         }
@@ -528,11 +531,19 @@
 
   /* ---------- Contact: the email is only assembled on click, so scrapers never see it ---------- */
   document.querySelectorAll('[data-email]').forEach((btn) => {
+    const out = btn.querySelector('[data-email-out]');
+    const label = () => {
+      if (!btn.dataset.revealed) out.textContent = tr('email_show');
+      else btn.title = tr('email_copy');
+      const mail = btn.closest('.contact') && btn.closest('.contact').querySelector('.contact-mailto');
+      if (mail) mail.textContent = tr('email_open');
+    };
+    label();
+    window.addEventListener('langchange', label);
     btn.addEventListener('click', () => {
       const addr = btn.dataset.email.split(',').map((n) => String.fromCharCode(n ^ 7)).join('');
-      const out = btn.querySelector('[data-email-out]');
       if (btn.dataset.revealed) {
-        try { navigator.clipboard.writeText(addr); out.textContent = 'Copied ✓'; } catch (e) {}
+        try { navigator.clipboard.writeText(addr); out.textContent = tr('email_copied'); } catch (e) {}
         setTimeout(() => { out.textContent = addr; }, 1400);
         return;
       }
@@ -540,11 +551,11 @@
       out.textContent = addr;
       btn.querySelector('.arrow').textContent = '⧉';
       btn.setAttribute('aria-label', `Copy email address ${addr}`);
-      btn.title = 'Click to copy';
+      btn.title = tr('email_copy');
       const mail = document.createElement('a');
       mail.href = `mailto:${addr}`;
       mail.className = 'contact-mailto';
-      mail.textContent = 'Open in your mail app ↗';
+      mail.textContent = tr('email_open');
       (btn.closest('.contact') || btn.parentElement).appendChild(mail);
     });
   });

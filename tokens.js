@@ -8,6 +8,7 @@
 ==================================================== */
 (function () {
   const TRIGGER = 'tokens';
+  const tr = (key) => (window.i18n ? window.i18n.t(key) : key);
 
   // Pre-tokenisation: contractions, words with their leading space, numbers, punctuation, whitespace
   const PRE = /'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+/gu;
@@ -143,16 +144,16 @@
     const pct = (count / 200000) * 100;
     panel.innerHTML = `
       <div class="tok-head">
-        <div class="tok-title">tokenizer view <span>· toy BPE</span></div>
-        <button type="button" class="tok-close" aria-label="Close tokenizer view">×</button>
+        <div class="tok-title">${tr('tok_view')} <span>· ${tr('tok_toy')}</span></div>
+        <button type="button" class="tok-close" aria-label="${tr('tok_close')}">×</button>
       </div>
-      <div class="tok-stats"><b data-count>0</b> tokens · <b>${(chars / count).toFixed(1)}</b> chars/token</div>
+      <div class="tok-stats"><b data-count>0</b> ${tr('tok_tokens')} · <b>${(chars / count).toFixed(1)}</b> ${tr('tok_ratio')}</div>
       <div class="tok-ctx"><div style="width:${Math.max(0.6, Math.min(100, pct))}%"></div></div>
-      <div class="tok-sub">${pct.toFixed(1)}% of a 200k-token context window</div>
-      <div class="tok-hover">hover a token to see its id</div>
+      <div class="tok-sub">${pct.toFixed(1)}% ${tr('tok_ctx')}</div>
+      <div class="tok-hover">${tr('tok_hover')}</div>
       <div class="tok-switch" role="group" aria-label="Show tokens as">
-        <button type="button" data-mode="text" aria-pressed="true">Text</button>
-        <button type="button" data-mode="ids" aria-pressed="false">Token IDs</button>
+        <button type="button" data-mode="text" aria-pressed="true">${tr('tok_text')}</button>
+        <button type="button" data-mode="ids" aria-pressed="false">${tr('tok_ids')}</button>
       </div>`;
     document.body.appendChild(panel);
     panel.querySelector('.tok-close').addEventListener('click', disable);
@@ -197,6 +198,9 @@
   const toggle = () => (active ? disable() : enable());
 
   document.querySelectorAll('[data-tok-toggle]').forEach((b) => b.addEventListener('click', toggle));
+  const titleButtons = () => document.querySelectorAll('.tok-toggle').forEach((b) => { b.title = tr('tok_title'); });
+  titleButtons();
+  window.addEventListener('langchange', titleButtons);
 
   document.addEventListener('mouseover', (e) => {
     if (!active || !panel) return;

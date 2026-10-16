@@ -10,6 +10,7 @@
   const root = document.documentElement;
   const css = (name) => getComputedStyle(root).getPropertyValue(name).trim();
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const tr = (key) => (window.i18n ? window.i18n.t(key) : key);
 
   const view = lab.querySelector('.lab-3d');
   const curve = lab.querySelector('.lab-curve');
@@ -255,7 +256,8 @@
       cctx.beginPath(); cctx.moveTo(pad.l, y); cctx.lineTo(cw - pad.r, y); cctx.stroke();
       cctx.fillText(v === 1 ? '1' : v === 1e-2 ? '1e-2' : '1e-4', 0, y + 3);
     });
-    cctx.fillText('step →', cw - 46, ch - 4);
+    const stepLabel = tr('step_arrow');
+    cctx.fillText(stepLabel, cw - cctx.measureText(stepLabel).width - 4, ch - 4);
     runners.forEach((r) => {
       cctx.strokeStyle = colors[r.o.key];
       cctx.lineWidth = 1.6;
@@ -331,6 +333,7 @@
 
   window.addEventListener('resize', () => { size(); render(); });
   window.addEventListener('themechange', () => { readColors(); render(); });
+  window.addEventListener('langchange', render);
 
   readColors();
   size();

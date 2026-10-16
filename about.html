@@ -18,11 +18,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="styles.css?v=7" />
 </head>
 <body>
     <div class="trainer" aria-hidden="true">
-    epoch <b data-epoch>000</b>/100 · loss <b data-train-loss>2.300</b> <span class="ok">✓ converged</span>
+    <span>epoch</span> <b data-epoch>000</b>/100 · <span>loss</span> <b data-train-loss>2.300</b> <span class="ok">✓ converged</span>
     <div class="trainer-bar"><div class="trainer-fill"></div></div>
   </div>
 
@@ -36,6 +36,7 @@
           <li><a href="index.html#projects">projects</a></li>
         </ul>
         <button class="tok-toggle" type="button" data-tok-toggle aria-pressed="false" title="See this page the way a language model reads it"><span class="tok-chip">tok</span>Tokens</button>
+        <button class="lang-toggle" type="button" data-lang-toggle data-no-i18n aria-label="Switch language"><span data-l="en">EN</span><span data-l="hu">HU</span></button>
         <button class="theme-toggle" type="button">☾ Night</button>
       </div>
     </nav>
@@ -48,7 +49,7 @@
       <h1>My <em>story.</em></h1>
     </div>
     <div class="readout" aria-hidden="true">
-      <span>step <b data-step>000</b></span>
+      <span><span>step</span> <b data-step>000</b></span>
       <span>L(θ) = <b data-loss>—</b></span>
       <span class="status"></span>
     </div>
@@ -63,7 +64,7 @@
         <div class="when">2006 – 2025</div>
         <div>
           <h3>High school</h3>
-          <p>
+          <p data-i18n-html>
             I was born in Szeged, Hungary on 10 November 2006, and went to SZTE Gyakorló Gimnázium.
             During high school I developed a strong interest in mathematics and geography. I graduated
             in 2025 with top grades (5) in every matura subject, taking mathematics, geography and
@@ -139,7 +140,8 @@
     </div>
   </footer>
 
-  <script src="script.js?v=5"></script>
-  <script src="tokens.js?v=5"></script>
+  <script src="i18n.js?v=7"></script>
+  <script src="script.js?v=7"></script>
+  <script src="tokens.js?v=7"></script>
 </body>
 </html>
