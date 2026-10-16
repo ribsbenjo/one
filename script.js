@@ -586,5 +586,5 @@
     })(performance.now());
   }
 
-  console.log('%cθ ← θ − η∇L(θ)  ·  psst, type "ice" on the page.', 'font: italic 15px Georgia, serif; color: #8a7f6a');
+  console.log('%cθ ← θ − η∇L(θ)  ·  psst, type "tokens" on the page, or try tokenize("Ribizsár Benjámin") here.', 'font: italic 15px Georgia, serif; color: #8a7f6a');
 })();

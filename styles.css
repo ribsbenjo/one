@@ -121,13 +121,15 @@ header {
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 1.6rem;
+  gap: 0.6rem;
 }
+
+.nav-links { margin-right: 1rem; }
 
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .nav-links a {
@@ -166,6 +168,35 @@ header {
 }
 
 .theme-toggle:hover { border-color: var(--ink-faint); background: var(--paper); }
+
+.tok-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font: 500 0.78rem var(--font-mono);
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem 0.3rem 0.35rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.tok-chip {
+  display: inline-flex;
+  font-size: 0.66rem;
+  line-height: 1;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+/* the chip itself is "tokenized": three coloured pieces */
+.tok-chip { background: linear-gradient(90deg, var(--tok-0) 0 34%, var(--tok-1) 34% 67%, var(--tok-2) 67%); padding: 0.28rem 0.45rem; }
+
+.tok-toggle:hover { border-color: var(--accent); }
+.tok-toggle.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 
 /* --------------------
    HERO + LANDSCAPE
@@ -1149,6 +1180,208 @@ section, .stats { margin-bottom: 7rem; }
 .trainer.done .ok { display: inline; }
 
 /* --------------------
+   TOKENIZER VIEW (easter egg: type "tokens")
+-------------------- */
+:root {
+  --tok-0: rgba(181, 82, 43, 0.26);
+  --tok-1: rgba(47, 111, 176, 0.24);
+  --tok-2: rgba(61, 138, 90, 0.26);
+  --tok-3: rgba(196, 150, 20, 0.3);
+  --tok-4: rgba(130, 80, 170, 0.22);
+}
+
+:root[data-theme="dark"] {
+  --tok-0: rgba(226, 135, 93, 0.32);
+  --tok-1: rgba(111, 168, 224, 0.3);
+  --tok-2: rgba(116, 192, 142, 0.3);
+  --tok-3: rgba(224, 190, 90, 0.3);
+  --tok-4: rgba(180, 140, 220, 0.3);
+}
+
+.tok {
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  white-space: pre-wrap;
+  transition: outline-color 0.1s;
+  outline: 1px solid transparent;
+}
+
+.tok-0 { background: var(--tok-0); }
+.tok-1 { background: var(--tok-1); }
+.tok-2 { background: var(--tok-2); }
+.tok-3 { background: var(--tok-3); }
+.tok-4 { background: var(--tok-4); }
+
+.tok:hover { outline-color: var(--ink); }
+
+/* Page view: tokens light up in a wave from top to bottom */
+.tok-wrap .tok { animation: tok-wave 0.5s ease backwards; animation-delay: var(--d, 0s); }
+
+@keyframes tok-wave {
+  0% { background: transparent; }
+  40% { background: var(--accent); color: var(--paper); }
+}
+
+/* ID mode: show the numbers the model actually receives */
+.tok-ids .tok-wrap .tok,
+.tok-play.show-ids .tok {
+  font-size: 0;
+}
+
+.tok-ids .tok-wrap .tok::after,
+.tok-play.show-ids .tok::after {
+  content: attr(data-id);
+  font: 500 0.68rem/1.9 var(--font-mono);
+  color: var(--ink);
+  padding: 0 0.2rem;
+  letter-spacing: 0;
+}
+
+.tok-head { display: flex; justify-content: space-between; align-items: baseline; }
+
+.tok-close {
+  font: 1.1rem/1 var(--font-body);
+  color: var(--ink-faint);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0 0.2rem;
+}
+
+.tok-close:hover { color: var(--accent); }
+
+.tok-switch {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 2px;
+  background: var(--bg);
+}
+
+.tok-switch button {
+  font: 500 0.68rem var(--font-mono);
+  color: var(--ink-faint);
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  cursor: pointer;
+}
+
+.tok-switch button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+/* Playground */
+.tok-play {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 2.4rem;
+  align-items: start;
+}
+
+.tok-play-intro p { color: var(--ink-soft); font-size: 0.96rem; margin-bottom: 1.3rem; }
+
+.tok-samples { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 1.6rem; }
+
+.tag-btn {
+  font: 0.74rem var(--font-mono);
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.tag-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.tok-play-box {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1.2rem 1.3rem 1rem;
+}
+
+.tok-label { font: 0.7rem var(--font-mono); color: var(--ink-faint); }
+
+.tok-input {
+  display: block;
+  width: 100%;
+  margin-top: 0.4rem;
+  font: 0.98rem/1.55 var(--font-body);
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.7rem 0.85rem;
+  resize: vertical;
+}
+
+.tok-input:focus { outline: none; border-color: var(--accent); }
+
+.tok-play-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1.2rem;
+  margin: 0.9rem 0 0.7rem;
+  font: 0.72rem var(--font-mono);
+  color: var(--ink-faint);
+}
+
+.tok-play-bar b { color: var(--ink); font-weight: 500; font-size: 0.9rem; }
+.tok-play-bar .tok-switch { margin-left: auto; }
+
+.tok-out {
+  min-height: 7rem;
+  font: 1.02rem/2 var(--font-body);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 0.7rem 0.85rem;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+}
+
+.tok-out .tok { padding: 0.1rem 0; }
+
+.tok-note { margin-top: 0.7rem; font: 0.7rem/1.5 var(--font-mono); color: var(--ink-faint); }
+
+.tok-panel {
+  position: fixed;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  z-index: 250;
+  width: 280px;
+  font: 0.72rem/1.55 var(--font-mono);
+  color: var(--ink-soft);
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  box-shadow: 0 20px 40px -26px rgba(0, 0, 0, 0.5);
+  animation: tok-in 0.25s ease;
+}
+
+@keyframes tok-in { from { opacity: 0; transform: translateY(8px); } }
+
+.tok-panel b { color: var(--ink); font-weight: 500; }
+.tok-title { color: var(--accent); margin-bottom: 0.35rem; }
+.tok-title span { color: var(--ink-faint); }
+.tok-ctx { height: 3px; background: var(--line); border-radius: 3px; margin: 0.55rem 0 0.25rem; overflow: hidden; }
+.tok-ctx div { height: 100%; background: var(--accent); }
+.tok-sub { color: var(--ink-faint); }
+.tok-hover { margin: 0.6rem 0; padding: 0.45rem 0.6rem; border-radius: 8px; background: var(--bg); min-height: 2.1rem; overflow-wrap: anywhere; }
+.tok-hover code { font: inherit; color: var(--ink); }
+.tok-panel .tok-switch { margin-top: 0.1rem; }
+
+@media (max-width: 720px) {
+  .tok-panel { left: 1rem; right: 1rem; width: auto; bottom: 1rem; }
+}
+
+/* --------------------
    FOOTER
 -------------------- */
 footer {
@@ -1213,6 +1446,7 @@ footer .landscape { opacity: 0.8; }
   .project-card,
   .project-card:nth-child(-n+2) { grid-column: auto; }
   .lab { grid-template-columns: 1fr; }
+  .tok-play { grid-template-columns: 1fr; }
   .lab-3d { min-height: 380px; }
   .gallery { grid-template-columns: 1fr 1fr; }
   .about-grid { grid-template-columns: 1fr; }
@@ -1230,6 +1464,7 @@ footer .landscape { opacity: 0.8; }
   main { padding: 3.5rem 1rem 2rem; }
   .navbar { padding: 0.75rem 1rem; }
   .nav-links { display: none; }
+  .tok-toggle { padding-right: 0.65rem; }
   .hero { min-height: auto; align-items: flex-start; }
   .hero-inner { padding: 3rem 1rem 9rem; }
   .hero-small .hero-inner { padding-bottom: 7rem; }

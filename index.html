@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=5" />
 </head>
 
 <body>
@@ -39,9 +39,11 @@
           <li><a href="#education">education</a></li>
           <li><a href="#projects">projects</a></li>
           <li><a href="#lab">lab</a></li>
+          <li><a href="#tokenizer">tokenizer</a></li>
           <li><a href="#skills">skills</a></li>
           <li><a href="#contact">contact</a></li>
         </ul>
+        <button class="tok-toggle" type="button" data-tok-toggle aria-pressed="false" title="See this page the way a language model reads it"><span class="tok-chip">tok</span>Tokens</button>
         <button class="theme-toggle" type="button">☾ Night</button>
       </div>
     </nav>
@@ -342,10 +344,51 @@
       </div>
     </section>
 
+    <!-- Tokenizer playground -->
+    <section id="tokenizer" class="reveal">
+      <div class="section-head">
+        <span class="num">§ 06</span>
+        <h2>Tokenizer</h2>
+        <span class="aside">how a language model reads text</span>
+      </div>
+      <div class="tok-play">
+        <div class="tok-play-intro">
+          <p>
+            Language models never see letters. Text is first cut into <em>tokens</em>, sub-word
+            pieces with an id each, and the model only ever works with those numbers.
+            Type below and watch it happen. Then compare English with Hungarian: every accented
+            letter falls back to its own byte-level token, so the same sentence costs noticeably more.
+          </p>
+          <div class="tok-samples" role="group" aria-label="Example texts">
+            <button type="button" class="tag-btn" data-sample="Ribizsár Benjámin builds automations and AI workflows for EVK College.">English</button>
+            <button type="button" class="tag-btn" data-sample="Ribizsár Benjámin automatizálásokat és AI-munkafolyamatokat épít az EVK Szakkollégiumnak.">Magyar</button>
+            <button type="button" class="tag-btn" data-sample="def gradient_step(theta, lr=0.01):&#10;    return theta - lr * grad(theta)">Code</button>
+            <button type="button" class="tag-btn" data-sample="Ice swimming at 2 °C 🧊🏊‍♂️ was worth it!">Emoji</button>
+          </div>
+          <button type="button" class="btn" data-tok-toggle>Tokenize this whole page ↻</button>
+        </div>
+        <div class="tok-play-box">
+          <label class="tok-label" for="tok-input">your text</label>
+          <textarea id="tok-input" class="tok-input" rows="3" spellcheck="false">Ribizsár Benjámin automatizálásokat és AI-munkafolyamatokat épít az EVK Szakkollégiumnak.</textarea>
+          <div class="tok-play-bar">
+            <span><b data-stat="tokens">0</b> tokens</span>
+            <span><b data-stat="chars">0</b> characters</span>
+            <span><b data-stat="ratio">0</b> chars/token</span>
+            <span class="tok-switch" role="group" aria-label="Show tokens as">
+              <button type="button" data-play-mode="text" aria-pressed="true">Text</button>
+              <button type="button" data-play-mode="ids" aria-pressed="false">IDs</button>
+            </span>
+          </div>
+          <div class="tok-out" aria-live="polite"></div>
+          <p class="tok-note">A toy tokenizer that imitates GPT-style BPE, written for this site. Real vocabularies have ~100k learned merges.</p>
+        </div>
+      </div>
+    </section>
+
     <!-- Achievements -->
     <section id="achievements" class="reveal">
       <div class="section-head">
-        <span class="num">§ 06</span>
+        <span class="num">§ 07</span>
         <h2>Achievements</h2>
       </div>
       <ul class="checklist">
@@ -361,7 +404,7 @@
     <!-- Skills -->
     <section id="skills" class="reveal">
       <div class="section-head">
-        <span class="num">§ 07</span>
+        <span class="num">§ 08</span>
         <h2>Skills</h2>
       </div>
       <div class="skills-wrap">
@@ -401,7 +444,7 @@
     <!-- Contact -->
     <section id="contact" class="reveal">
       <div class="section-head">
-        <span class="num">§ 08</span>
+        <span class="num">§ 09</span>
         <h2>Contact</h2>
       </div>
       <div class="contact">
@@ -444,7 +487,8 @@
     </div>
   </footer>
 
-  <script src="script.js?v=3"></script>
-  <script src="lab.js?v=3"></script>
+  <script src="script.js?v=5"></script>
+  <script src="tokens.js?v=5"></script>
+  <script src="lab.js?v=5"></script>
 </body>
 </html>
