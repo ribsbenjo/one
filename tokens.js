@@ -232,6 +232,9 @@
       stat('tokens').textContent = count.toLocaleString('en-US');
       stat('chars').textContent = text.length.toLocaleString('en-US');
       stat('ratio').textContent = count ? (text.length / count).toFixed(1) : '0';
+      // Hand the tokens to the vector lab (vec.js)
+      window.__lastTokens = tokenize(text);
+      window.dispatchEvent(new CustomEvent('tokens:update', { detail: { tokens: window.__lastTokens } }));
     };
     input.addEventListener('input', draw);
     play.querySelectorAll('[data-sample]').forEach((b) => b.addEventListener('click', () => {

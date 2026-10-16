@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=7" />
+  <link rel="stylesheet" href="styles.css?v=8" />
 </head>
 
 <body>
@@ -383,6 +383,28 @@
           <p class="tok-note">A toy tokenizer that imitates GPT-style BPE, written for this site. Real vocabularies have ~100k learned merges.</p>
         </div>
       </div>
+      <div class="vec-lab">
+        <div class="vec-head">
+          <h3>From tokens to vectors</h3>
+          <p>A model can’t multiply words, so every token id selects one row of an embedding matrix. From there it’s all linear algebra: dot products measure similarity and an eigen-decomposition finds the directions that matter most.</p>
+        </div>
+        <div class="vec-grid">
+          <figure class="vec-card">
+            <figcaption><span class="math">x = one_hot(id) · E</span><span class="k">embedding rows · tokens × 16 dims</span></figcaption>
+            <canvas data-vec="E" aria-label="Embedding matrix heatmap"></canvas>
+          </figure>
+          <figure class="vec-card">
+            <figcaption><span class="math">S = Ê Êᵀ</span><span class="k">cosine similarity · hover a cell</span></figcaption>
+            <canvas data-vec="S" aria-label="Cosine similarity matrix"></canvas>
+          </figure>
+          <figure class="vec-card">
+            <figcaption><span class="math">Σ v = λ v</span><span class="k">PCA by power iteration · 16D → 2D</span></figcaption>
+            <canvas data-vec="P" aria-label="Tokens projected onto the first two principal components"></canvas>
+          </figure>
+        </div>
+        <p class="vec-readout" data-vec-readout aria-live="polite"></p>
+        <p class="tok-note">Embeddings here come from hashed character n-grams (like fastText), so tokens that are spelled alike point the same way. A trained model learns E from data, which is where meaning comes from.</p>
+      </div>
     </section>
 
     <!-- Achievements -->
@@ -487,9 +509,10 @@
     </div>
   </footer>
 
-  <script src="i18n.js?v=7"></script>
-  <script src="script.js?v=7"></script>
-  <script src="tokens.js?v=7"></script>
-  <script src="lab.js?v=7"></script>
+  <script src="i18n.js?v=8"></script>
+  <script src="script.js?v=8"></script>
+  <script src="tokens.js?v=8"></script>
+  <script src="lab.js?v=8"></script>
+  <script src="vec.js?v=8"></script>
 </body>
 </html>

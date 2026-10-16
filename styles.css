@@ -821,6 +821,71 @@ section, .stats { margin-bottom: 7rem; }
 }
 
 /* --------------------
+   VECTOR LAB (under the tokenizer)
+-------------------- */
+.vec-lab {
+  margin-top: 3rem;
+  padding-top: 2.4rem;
+  border-top: 1px dashed var(--line);
+}
+
+.vec-head {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 2.4rem;
+  align-items: baseline;
+  margin-bottom: 1.6rem;
+}
+
+.vec-head h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.6rem;
+  line-height: 1.2;
+}
+
+.vec-head p { color: var(--ink-soft); font-size: 0.96rem; }
+
+.vec-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.vec-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem 1rem 0.8rem;
+  min-width: 0;
+}
+
+.vec-card figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 0.7rem;
+}
+
+.vec-card .math { font-size: 1.2rem; color: var(--ink); }
+.vec-card .k { font: 0.7rem var(--font-mono); color: var(--ink-faint); }
+
+.vec-card canvas {
+  display: block;
+  width: 100%;
+  height: 260px;
+}
+
+.vec-readout {
+  margin-top: 1rem;
+  min-height: 1.6em;
+  font: 0.8rem var(--font-mono);
+  color: var(--ink-soft);
+}
+
+.vec-readout b { color: var(--ink); font-weight: 500; }
+
+/* --------------------
    ACHIEVEMENTS
 -------------------- */
 .checklist {
@@ -1475,6 +1540,9 @@ footer .landscape { opacity: 0.8; }
   .project-card:nth-child(-n+2) { grid-column: auto; }
   .lab { grid-template-columns: 1fr; }
   .tok-play { grid-template-columns: 1fr; }
+  .vec-head { grid-template-columns: 1fr; gap: 0.6rem; }
+  .vec-grid { grid-template-columns: 1fr; }
+  .vec-card canvas { height: 240px; }
   .lab-3d { min-height: 380px; }
   .gallery { grid-template-columns: 1fr 1fr; }
   .about-grid { grid-template-columns: 1fr; }
