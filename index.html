@@ -356,20 +356,19 @@
           <p>
             Language models never see letters. Text is first cut into <em>tokens</em>, sub-word
             pieces with an id each, and the model only ever works with those numbers.
-            Type below and watch it happen. Then compare English with Hungarian: every accented
-            letter falls back to its own byte-level token, so the same sentence costs noticeably more.
+            Type below and watch it happen. Then try the Hungarian sample: every accented letter falls back to its own byte-level token,
+            so Hungarian text costs noticeably more tokens than English.
           </p>
           <div class="tok-samples" role="group" aria-label="Example texts">
-            <button type="button" class="tag-btn" data-sample="Ribizsár Benjámin builds automations and AI workflows for EVK College.">English</button>
-            <button type="button" class="tag-btn" data-sample="Ribizsár Benjámin automatizálásokat és AI-munkafolyamatokat épít az EVK Szakkollégiumnak.">Magyar</button>
+            <button type="button" class="tag-btn" data-sample="The quick brown fox jumps over the lazy dog.">English</button>
+            <button type="button" class="tag-btn" data-sample="Árvíztűrő tükörfúrógép: minden magyar ékezet egyetlen kifejezésben.">Magyar</button>
             <button type="button" class="tag-btn" data-sample="def gradient_step(theta, lr=0.01):&#10;    return theta - lr * grad(theta)">Code</button>
-            <button type="button" class="tag-btn" data-sample="Ice swimming at 2 °C 🧊🏊‍♂️ was worth it!">Emoji</button>
+            <button type="button" class="tag-btn" data-sample="Coffee first ☕, then gradient descent 📉">Emoji</button>
           </div>
-          <button type="button" class="btn" data-tok-toggle>Tokenize this whole page ↻</button>
         </div>
         <div class="tok-play-box">
           <label class="tok-label" for="tok-input">your text</label>
-          <textarea id="tok-input" class="tok-input" rows="3" spellcheck="false">Ribizsár Benjámin automatizálásokat és AI-munkafolyamatokat épít az EVK Szakkollégiumnak.</textarea>
+          <textarea id="tok-input" class="tok-input" rows="3" spellcheck="false">The quick brown fox jumps over the lazy dog.</textarea>
           <div class="tok-play-bar">
             <span><b data-stat="tokens">0</b> tokens</span>
             <span><b data-stat="chars">0</b> characters</span>
