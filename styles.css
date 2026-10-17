@@ -663,7 +663,6 @@ section, .stats { margin-bottom: 7rem; }
 }
 
 .project-card { grid-column: span 2; }
-.project-card:nth-child(n+4) { grid-column: span 3; }
 
 .project-card {
   position: relative;
@@ -1353,8 +1352,7 @@ footer .landscape { opacity: 0.8; }
 -------------------- */
 @media (max-width: 960px) {
   .project-grid { grid-template-columns: 1fr 1fr; }
-  .project-card,
-  .project-card:nth-child(n+4) { grid-column: auto; }
+  .project-card { grid-column: auto; }
   .tok-play { grid-template-columns: 1fr; }
   .vec-head { grid-template-columns: 1fr; gap: 0.6rem; }
   .vec-grid { grid-template-columns: 1fr; }
