@@ -513,7 +513,7 @@ section, .stats { margin-bottom: 7rem; }
   margin-bottom: 0.9rem;
 }
 
-.note-card ul { list-style: none; margin-bottom: 1.4rem; }
+.note-card ul { list-style: none; margin-bottom: 0.9rem; }
 
 .note-card li {
   display: flex;
@@ -525,6 +525,14 @@ section, .stats { margin-bottom: 7rem; }
 }
 
 .note-card li span:first-child { color: var(--ink-faint); }
+
+.note-link {
+  font: 0.72rem var(--font-mono);
+  color: var(--ink-faint);
+  text-decoration: none;
+}
+
+.note-link:hover { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; }
 
 /* --------------------
    TIMELINE — a descent path through the roles
@@ -827,37 +835,6 @@ section, .stats { margin-bottom: 7rem; }
 }
 
 .lifts b { color: var(--ink); font-weight: 500; }
-
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-}
-
-.gallery figure {
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 0.5rem 0.5rem 0.7rem;
-}
-
-.gallery img {
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 8px;
-  filter: saturate(0.85);
-  transition: filter 0.3s;
-}
-
-.gallery figure:hover img { filter: none; }
-
-.gallery figcaption {
-  font-family: var(--font-display);
-  font-style: italic;
-  color: var(--ink-soft);
-  margin-top: 0.5rem;
-  padding-left: 0.2rem;
-}
 
 /* --------------------
    CONTACT
@@ -1212,7 +1189,6 @@ footer .landscape { opacity: 0.8; }
 @media (max-width: 960px) {
   .project-grid { grid-template-columns: 1fr 1fr; }
   .project-card { grid-column: auto; }
-  .gallery { grid-template-columns: 1fr 1fr; }
   .about-grid { grid-template-columns: 1fr; }
   .about-grid > div { grid-column: auto; }
   .contact-cards { grid-template-columns: 1fr; }
