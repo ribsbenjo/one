@@ -1,7 +1,6 @@
 /* ====================================================
    Tokenizer view: the "Tokens" button (or typing "tokens")
-   shows the page the way a language model reads it, and
-   the playground tokenizes whatever you type. A toy BPE-style tokenizer:
+   shows the page the way a language model reads it. A toy BPE-style tokenizer:
    GPT-2-like pre-tokenisation, common English pieces kept
    whole, long words split into sub-words, and accented
    letters (á, é, ő…) falling back to byte-level tokens.
@@ -99,7 +98,7 @@
   }
 
   /* ---------- Page overlay ---------- */
-  const SKIP = 'script, style, canvas, svg, noscript, textarea, input, select, .tok-panel, .tok-play';
+  const SKIP = 'script, style, canvas, svg, noscript, textarea, input, select, .tok-panel';
   let active = false;
   let wrapped = [];
   let panel = null;
@@ -218,35 +217,6 @@
     typed = (typed + e.key.toLowerCase()).slice(-TRIGGER.length);
     if (typed === TRIGGER) { typed = ''; toggle(); }
   });
-
-  /* ---------- Playground ---------- */
-  const play = document.querySelector('.tok-play');
-  if (play) {
-    const input = play.querySelector('.tok-input');
-    const out = play.querySelector('.tok-out');
-    const stat = (k) => play.querySelector(`[data-stat="${k}"]`);
-    const draw = () => {
-      out.textContent = '';
-      const text = input.value;
-      const { count } = renderTokens(out, text);
-      stat('tokens').textContent = count.toLocaleString('en-US');
-      stat('chars').textContent = text.length.toLocaleString('en-US');
-      stat('ratio').textContent = count ? (text.length / count).toFixed(1) : '0';
-      // Hand the tokens to the vector lab (vec.js)
-      window.__lastTokens = tokenize(text);
-      window.dispatchEvent(new CustomEvent('tokens:update', { detail: { tokens: window.__lastTokens } }));
-    };
-    input.addEventListener('input', draw);
-    play.querySelectorAll('[data-sample]').forEach((b) => b.addEventListener('click', () => {
-      input.value = b.dataset.sample;
-      draw();
-    }));
-    play.querySelectorAll('[data-play-mode]').forEach((b) => b.addEventListener('click', () => {
-      play.classList.toggle('show-ids', b.dataset.playMode === 'ids');
-      play.querySelectorAll('[data-play-mode]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-    }));
-    draw();
-  }
 
   // For the curious: window.tokenize("Ribizsár Benjámin")
   window.tokenize = (s) => tokenize(String(s)).map((t) => ({ token: t, id: hash(t) }));
